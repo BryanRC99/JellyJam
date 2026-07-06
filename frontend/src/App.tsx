@@ -1,0 +1,26 @@
+import { Routes, Route } from 'react-router-dom';
+import Login from './pages/Login';
+import Home from './pages/Home';
+import Favorites from './pages/Favorites';
+import Songs from './pages/Songs';
+import Albums from './pages/Albums';
+import AlbumDetail from './pages/AlbumDetail';
+import ProtectedRoute from './components/ProtectedRoute';
+import AppLayout from './components/layout/AppLayout';
+
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route element={<ProtectedRoute />}>
+        <Route element={<AppLayout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/favorites" element={<Favorites />} />
+          <Route path="/songs" element={<Songs />} />
+          <Route path="/albums" element={<Albums />} />
+          <Route path="/albums/:albumId" element={<AlbumDetail />} />
+        </Route>
+      </Route>
+    </Routes>
+  );
+}

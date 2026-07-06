@@ -1,0 +1,9 @@
+# Excluir la carpeta cache dentro de backend
+backend/cache/
+
+# Otras carpetas comunes que deberías excluir para que tu repo no pese gigas
+node_modules/
+.env
+dist/
+build/
+.DS_Store
