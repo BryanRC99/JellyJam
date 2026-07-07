@@ -6,7 +6,7 @@ export interface Album {
   artist: string;
   year: number | null;
   trackCount: number;
-  coverUrl: string;
+  coverUrl: string | null;
 }
 
 export interface AlbumDetail extends Album {

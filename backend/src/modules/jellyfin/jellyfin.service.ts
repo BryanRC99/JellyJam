@@ -143,3 +143,152 @@ export async function getAlbumTracks(userId: string, token: string, albumId: str
   const data = await res.json();
   return data.Items ?? [];
 }
+
+export async function getArtists(userId: string, token: string) {
+  const params = new URLSearchParams({
+    UserId: userId,
+    SortBy: 'SortName',
+  });
+
+  const res = await fetch(`${env.jellyfinServerUrl}/Artists?${params}`, {
+    headers: { 'X-Emby-Token': token },
+  });
+
+  if (!res.ok) throw new Error(`Error al obtener artistas (${res.status})`);
+  const data = await res.json();
+  return data.Items ?? [];
+}
+
+export async function getArtistById(userId: string, token: string, artistId: string) {
+  const res = await fetch(`${env.jellyfinServerUrl}/Users/${userId}/Items/${artistId}`, {
+    headers: { 'X-Emby-Token': token },
+  });
+
+  if (!res.ok) throw new Error(`Error al obtener el artista (${res.status})`);
+  return res.json();
+}
+
+export async function getArtistAlbums(userId: string, token: string, artistId: string) {
+  const params = new URLSearchParams({
+    IncludeItemTypes: 'MusicAlbum',
+    Recursive: 'true',
+    ArtistIds: artistId,
+    SortBy: 'ProductionYear,SortName',
+    Fields: 'AlbumArtist,ChildCount,ProductionYear',
+  });
+
+  const res = await fetch(`${env.jellyfinServerUrl}/Users/${userId}/Items?${params}`, {
+    headers: { 'X-Emby-Token': token },
+  });
+
+  if (!res.ok) throw new Error(`Error al obtener álbumes del artista (${res.status})`);
+  const data = await res.json();
+  return data.Items ?? [];
+}
+
+export async function getArtistTracks(userId: string, token: string, artistId: string) {
+  const params = new URLSearchParams({
+    IncludeItemTypes: 'Audio',
+    Recursive: 'true',
+    ArtistIds: artistId,
+    SortBy: 'Album,ParentIndexNumber,IndexNumber',
+    Fields: 'Artists,Album,RunTimeTicks,UserData',
+  });
+
+  const res = await fetch(`${env.jellyfinServerUrl}/Users/${userId}/Items?${params}`, {
+    headers: { 'X-Emby-Token': token },
+  });
+
+  if (!res.ok) throw new Error(`Error al obtener canciones del artista (${res.status})`);
+  const data = await res.json();
+  return data.Items ?? [];
+}
+
+export async function getUserPlaylists(userId: string, token: string) {
+  const params = new URLSearchParams({
+    IncludeItemTypes: 'Playlist',
+    Recursive: 'true',
+    SortBy: 'SortName',
+  });
+
+  const res = await fetch(`${env.jellyfinServerUrl}/Users/${userId}/Items?${params}`, {
+    headers: { 'X-Emby-Token': token },
+  });
+
+  if (!res.ok) throw new Error(`Error al obtener playlists (${res.status})`);
+  const data = await res.json();
+  return data.Items ?? [];
+}
+
+export async function getPlaylistById(userId: string, token: string, playlistId: string) {
+  const res = await fetch(`${env.jellyfinServerUrl}/Users/${userId}/Items/${playlistId}`, {
+    headers: { 'X-Emby-Token': token },
+  });
+
+  if (!res.ok) throw new Error(`Error al obtener la playlist (${res.status})`);
+  return res.json();
+}
+
+export async function getPlaylistTracks(userId: string, token: string, playlistId: string) {
+  const params = new URLSearchParams({
+    UserId: userId,
+    Fields: 'Artists,Album,RunTimeTicks,UserData',
+  });
+
+  const res = await fetch(`${env.jellyfinServerUrl}/Playlists/${playlistId}/Items?${params}`, {
+    headers: { 'X-Emby-Token': token },
+  });
+
+  if (!res.ok) throw new Error(`Error al obtener canciones de la playlist (${res.status})`);
+  const data = await res.json();
+  return data.Items ?? [];
+}
+
+export async function createPlaylist(
+  userId: string,
+  token: string,
+  name: string,
+  firstItemId?: string
+) {
+  const body: Record<string, unknown> = { Name: name, UserId: userId, MediaType: 'Audio' };
+  if (firstItemId) body.Ids = [firstItemId];
+
+  const res = await fetch(`${env.jellyfinServerUrl}/Playlists`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Emby-Token': token },
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) throw new Error(`Error al crear la playlist (${res.status})`);
+  return res.json(); // { Id: '...' }
+}
+
+export async function addItemToPlaylist(
+  token: string,
+  userId: string,
+  playlistId: string,
+  itemId: string
+) {
+  const params = new URLSearchParams({ Ids: itemId, UserId: userId });
+  const res = await fetch(`${env.jellyfinServerUrl}/Playlists/${playlistId}/Items?${params}`, {
+    method: 'POST',
+    headers: { 'X-Emby-Token': token },
+  });
+
+  if (!res.ok) throw new Error(`Error al agregar la canción a la playlist (${res.status})`);
+}
+
+export async function removeItemFromPlaylist(
+  token: string,
+  userId: string, 
+  playlistId: string,
+  entryId: string
+) {
+  const params = new URLSearchParams({ EntryIds: entryId, UserId: userId });
+  const res = await fetch(`${env.jellyfinServerUrl}/Playlists/${playlistId}/Items?${params}`, {
+    method: 'DELETE',
+    headers: { 'X-Emby-Token': token },
+  });
+
+  if (!res.ok) throw new Error(`Error al quitar la canción de la playlist (${res.status})`);
+}

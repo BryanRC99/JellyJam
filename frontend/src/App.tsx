@@ -5,6 +5,10 @@ import Favorites from './pages/Favorites';
 import Songs from './pages/Songs';
 import Albums from './pages/Albums';
 import AlbumDetail from './pages/AlbumDetail';
+import Artists from './pages/Artists';
+import ArtistDetail from './pages/ArtistDetail';
+import Playlists from './pages/Playlists';
+import PlaylistDetail from './pages/PlaylistDetail';
 import ProtectedRoute from './components/ProtectedRoute';
 import AppLayout from './components/layout/AppLayout';
 
@@ -19,6 +23,10 @@ export default function App() {
           <Route path="/songs" element={<Songs />} />
           <Route path="/albums" element={<Albums />} />
           <Route path="/albums/:albumId" element={<AlbumDetail />} />
+          <Route path="/artists" element={<Artists />} />
+          <Route path="/artists/:artistId" element={<ArtistDetail />} />
+          <Route path="/playlists" element={<Playlists />} />
+          <Route path="/playlists/:playlistId" element={<PlaylistDetail />} />
         </Route>
       </Route>
     </Routes>

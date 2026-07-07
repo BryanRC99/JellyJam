@@ -30,7 +30,7 @@ export default function AlbumDetail() {
   }
 
   function handlePlayAlbum() {
-    if (album.tracks.length > 0) playTrack(album.tracks[0], album.tracks);
+    if (album!.tracks.length > 0) playTrack(album!.tracks[0], album!.tracks);
   }
 
   return (

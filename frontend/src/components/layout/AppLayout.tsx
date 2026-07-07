@@ -2,6 +2,7 @@ import { Outlet } from 'react-router-dom';
 
 import Sidebar from './Sidebar';
 import Player from '../Player';
+import ToastContainer from '../common/ToastContainer';
 
 export default function AppLayout() {
   return (
@@ -20,6 +21,7 @@ export default function AppLayout() {
       </div>
 
       <Player />
+      <ToastContainer/>
 
     </div>
   );

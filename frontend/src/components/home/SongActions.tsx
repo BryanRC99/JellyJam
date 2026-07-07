@@ -10,6 +10,7 @@ interface SongActionsProps {
   onOpen: () => void;
   onClose: () => void;
   onToggleFavorite?: (track: Track) => void;
+  onRemoveFromPlaylist?: (track: Track) => void;
 }
 
 export default function SongActions({
@@ -18,6 +19,7 @@ export default function SongActions({
   onOpen,
   onClose,
   onToggleFavorite,
+  onRemoveFromPlaylist,
 }: SongActionsProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -54,7 +56,7 @@ export default function SongActions({
       </button>
 
       {isOpen && (
-        <SongContextMenu track={track} onToggleFavorite={onToggleFavorite} onClose={onClose} />
+        <SongContextMenu track={track} onToggleFavorite={onToggleFavorite} onRemoveFromPlaylist={onRemoveFromPlaylist} onClose={onClose} />
       )}
     </div>
   );

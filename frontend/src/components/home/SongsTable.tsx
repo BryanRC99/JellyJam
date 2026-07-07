@@ -10,6 +10,7 @@ interface SongsTableProps {
   currentTrackId?: string;
   onTrackSelect?: (track: Track) => void;
   onToggleFavorite?: (track: Track) => void;
+  onRemoveFromPlaylist?: (track: Track) => void;
 }
 
 const GRID_COLS = 'grid-cols-[24px_1fr_180px_72px_64px]';
@@ -19,6 +20,7 @@ export default function SongsTable({
   currentTrackId,
   onTrackSelect,
   onToggleFavorite,
+  onRemoveFromPlaylist,
 }: SongsTableProps) {
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
@@ -98,6 +100,7 @@ export default function SongsTable({
                 onOpen={() => setOpenMenuId(track.id)}
                 onClose={() => setOpenMenuId(null)}
                 onToggleFavorite={onToggleFavorite}
+                onRemoveFromPlaylist={onRemoveFromPlaylist}
               />
 
               {/* Duración */}
