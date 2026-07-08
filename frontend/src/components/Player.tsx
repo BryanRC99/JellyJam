@@ -13,6 +13,7 @@ import { useTrackLookup } from '../hooks/useTrackLookup';
 import { getExpectedPosition } from '../utils/roomSync';
 import { useToastStore } from '../store/toastStore';
 import { useClickOutside } from '../hooks/useClickOutside';
+import { useUnlockAudio } from '../hooks/useUnlockAudio';
 import MemberList from './room/MemberList';
 
 function formatTime(seconds: number) {
@@ -85,6 +86,7 @@ function RoomPlayer({ room, setPlayback, seek, transferHost, kickMember, leaveRo
 
   useClickOutside(membersMenuRef, () => setShowMembers(false), showMembers);
   useClickOutside(queueMenuRef, () => setShowQueue(false), showQueue);
+  useUnlockAudio([audioRef]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -373,6 +375,8 @@ function SoloPlayer() {
   const audioRefA = useRef<HTMLAudioElement>(null);
   const audioRefB = useRef<HTMLAudioElement>(null);
   const slotTrackId = useRef<{ A: string | null; B: string | null }>({ A: null, B: null });
+
+  useUnlockAudio([audioRefA, audioRefB]);
 
   const [activeSlot, setActiveSlot] = useState<Slot>('A');
   const [progress, setProgress] = useState(0);
