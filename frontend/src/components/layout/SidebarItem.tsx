@@ -16,15 +16,15 @@ export default function SidebarItem({
     <NavLink
       to={to}
       className={({ isActive }) =>
-        `flex items-center gap-3 rounded-lg px-3 py-2 transition-colors ${
+        `flex min-w-0 items-center gap-3 rounded-lg px-3 py-1.5 transition-colors ${
           isActive
             ? 'bg-neutral-800 text-white'
             : 'text-neutral-400 hover:bg-neutral-900 hover:text-white'
         }`
       }
     >
-      <Icon size={20} />
-      <span className="text-sm font-medium">{label}</span>
+      <Icon size={20} className="shrink-0" />
+      <span className="truncate text-sm font-medium">{label}</span>
     </NavLink>
   );
 }
