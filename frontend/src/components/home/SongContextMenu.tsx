@@ -1,17 +1,11 @@
 import { useState } from 'react';
-import {
-  Heart,
-  ListPlus,
-  ListMusic,
-  Disc3,
-  Mic2,
-  Share2,
-  Download,
-  Info,
-} from 'lucide-react';
+import { Heart, ListPlus, ListMusic, Disc3, Mic2, Share2, Download, Info } from 'lucide-react';
 import type { Track } from '../../types/track';
 import MenuItem from './MenuItem';
 import AddToPlaylistMenu from './AddToPlaylistMenu';
+import { useRoomStore } from '../../store/roomStore';
+import { usePlayerStore } from '../../store/playerStore';
+import { useToastStore } from '../../store/toastStore';
 
 interface Props {
   track: Track;
@@ -20,13 +14,24 @@ interface Props {
   onClose: () => void;
 }
 
-export default function SongContextMenu({
-  track,
-  onToggleFavorite,
-  onRemoveFromPlaylist,
-  onClose,
-}: Props) {
+export default function SongContextMenu({ track, onToggleFavorite, onRemoveFromPlaylist, onClose }: Props) {
   const [view, setView] = useState<'menu' | 'add-to-playlist'>('menu');
+
+  const room = useRoomStore((s) => s.room);
+  const roomAddToQueue = useRoomStore((s) => s.addToQueue);
+  const localAddToQueue = usePlayerStore((s) => s.addToQueue);
+  const showToast = useToastStore((s) => s.showToast);
+
+  function handleAddToQueue() {
+    if (room) {
+      roomAddToQueue(track.id);
+      showToast(`"${track.title}" añadida a la cola de la sala`);
+    } else {
+      localAddToQueue(track as any);
+      showToast(`"${track.title}" añadida a la cola`);
+    }
+    onClose();
+  }
 
   return (
     <div
@@ -49,6 +54,7 @@ export default function SongContextMenu({
           <div className="my-1 border-t border-neutral-800" />
 
           <MenuItem icon={ListPlus} label="Agregar a playlist" onClick={() => setView('add-to-playlist')} />
+          <MenuItem icon={ListMusic} label="Agregar a la cola" onClick={handleAddToQueue} />
 
           {onRemoveFromPlaylist && (
             <MenuItem

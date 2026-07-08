@@ -10,8 +10,23 @@ import {
 } from 'lucide-react';
 
 import SidebarItem from './SidebarItem';
+import { useNavigate } from 'react-router-dom'; // agrega este import arriba
+import { apiFetch } from '../../lib/api'; // y este
+import { useRoomStore } from '../../store/roomStore'; // y este
 
 export default function Sidebar() {
+
+  const navigate = useNavigate();
+  const joinRoom = useRoomStore((s) => s.joinRoom);
+
+  async function handleCreateRoom() {
+    const room = await apiFetch('/rooms', {
+      method: 'POST',
+      body: JSON.stringify({ allowGuestControl: true }),
+    });
+    joinRoom(room.code);
+    navigate('/room');
+  }
   return (
     <aside className="w-72 bg-neutral-950 border-r border-neutral-900 flex flex-col">
 
@@ -89,48 +104,44 @@ export default function Sidebar() {
 
         <div className="space-y-1">
 
-          <button className="w-full flex items-center gap-3 rounded-lg px-3 py-2 text-neutral-400 hover:bg-neutral-900 hover:text-white transition">
-
+          <button
+            onClick={handleCreateRoom}
+            className="w-full flex items-center gap-3 rounded-lg px-3 py-2 text-neutral-400 hover:bg-neutral-900 hover:text-white transition"
+          >
             <Plus size={20} />
-
-            <span className="text-sm font-medium">
-              Crear sala
-            </span>
-
+            <span className="text-sm font-medium">Crear sala</span>
           </button>
 
-          <button className="w-full flex items-center gap-3 rounded-lg px-3 py-2 text-neutral-400 hover:bg-neutral-900 hover:text-white transition">
-
+          <button
+            onClick={() => navigate('/room/join')}
+            className="w-full flex items-center gap-3 rounded-lg px-3 py-2 text-neutral-400 hover:bg-neutral-900 hover:text-white transition"
+          >
             <Radio size={20} />
-
-            <span className="text-sm font-medium">
-              Unirse
-            </span>
-
+            <span className="text-sm font-medium">Unirse</span>
           </button>
 
-        </div>
-
       </div>
 
-      {/* Footer */}
+    </div>
 
-      <div className="mt-auto p-5 border-t border-neutral-900">
+      {/* Footer */ }
 
-        <div className="rounded-lg bg-neutral-900 p-4">
+  <div className="mt-auto p-5 border-t border-neutral-900">
 
-          <p className="font-medium">
-            JellyJam
-          </p>
+    <div className="rounded-lg bg-neutral-900 p-4">
 
-          <p className="text-xs text-neutral-500 mt-1">
-            Versión 0.1.0
-          </p>
+      <p className="font-medium">
+        JellyJam
+      </p>
 
-        </div>
+      <p className="text-xs text-neutral-500 mt-1">
+        Versión 0.1.0
+      </p>
 
-      </div>
+    </div>
 
-    </aside>
+  </div>
+
+    </aside >
   );
 }

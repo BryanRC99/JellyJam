@@ -1,6 +1,16 @@
 import { create } from 'zustand';
 import { useMemo } from 'react';
-import type { Track } from '../types/track';
+
+export interface Track {
+  id: string;
+  title: string;
+  artist: string;
+  album: string;
+  durationSeconds: number;
+  streamUrl: string;
+  coverUrl: string;
+  isFavorite: boolean;
+}
 
 export type RepeatMode = 'off' | 'all' | 'one';
 
@@ -28,6 +38,7 @@ interface PlayerState {
   muted: boolean;
 
   playTrack: (track: Track, queue?: Track[]) => void;
+  addToQueue: (track: Track) => void;
   togglePlay: () => void;
   next: () => void;
   prev: () => void;
@@ -35,6 +46,7 @@ interface PlayerState {
   cycleRepeat: () => void;
   setVolume: (v: number) => void;
   toggleMute: () => void;
+  updateTrackFavorite: (trackId: string, isFavorite: boolean) => void;
 }
 
 export const usePlayerStore = create<PlayerState>((set, get) => ({
@@ -52,8 +64,14 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     const index = list.findIndex((t) => t.id === track.id);
     const currentIndex = index === -1 ? 0 : index;
     const order = get().shuffle ? shuffleOrder(list.length) : sequentialOrder(list.length);
-
     set({ queue: list, currentIndex, order, isPlaying: true });
+  },
+
+  addToQueue: (track) => {
+    set((s) => {
+      const newIndex = s.queue.length;
+      return { queue: [...s.queue, track], order: [...s.order, newIndex] };
+    });
   },
 
   togglePlay: () => set((s) => ({ isPlaying: !s.isPlaying })),
@@ -61,7 +79,6 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
   next: () => {
     const { order, currentIndex, repeatMode } = get();
     if (order.length === 0) return;
-
     const pos = order.indexOf(currentIndex);
     if (pos < order.length - 1) {
       set({ currentIndex: order[pos + 1], isPlaying: true });
@@ -75,11 +92,8 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
   prev: () => {
     const { order, currentIndex } = get();
     if (order.length === 0) return;
-
     const pos = order.indexOf(currentIndex);
-    if (pos > 0) {
-      set({ currentIndex: order[pos - 1], isPlaying: true });
-    }
+    if (pos > 0) set({ currentIndex: order[pos - 1], isPlaying: true });
   },
 
   toggleShuffle: () => {
@@ -95,8 +109,10 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
   },
 
   setVolume: (v) => set({ volume: v, muted: v === 0 }),
-
   toggleMute: () => set((s) => ({ muted: !s.muted })),
+
+  updateTrackFavorite: (trackId, isFavorite) =>
+    set((s) => ({ queue: s.queue.map((t) => (t.id === trackId ? { ...t, isFavorite } : t)) })),
 }));
 
 export function useCurrentTrack() {

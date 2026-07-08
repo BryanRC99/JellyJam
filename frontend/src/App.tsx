@@ -11,6 +11,8 @@ import Playlists from './pages/Playlists';
 import PlaylistDetail from './pages/PlaylistDetail';
 import ProtectedRoute from './components/ProtectedRoute';
 import AppLayout from './components/layout/AppLayout';
+import Room from './pages/Room';
+import RoomJoin from './pages/RoomJoin';
 
 export default function App() {
   return (
@@ -27,6 +29,8 @@ export default function App() {
           <Route path="/artists/:artistId" element={<ArtistDetail />} />
           <Route path="/playlists" element={<Playlists />} />
           <Route path="/playlists/:playlistId" element={<PlaylistDetail />} />
+          <Route path="/room" element={<Room />} />
+          <Route path="/room/join" element={<RoomJoin />} />
         </Route>
       </Route>
     </Routes>
