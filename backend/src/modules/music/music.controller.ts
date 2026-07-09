@@ -61,7 +61,7 @@ export async function listFavoriteTracksController(req: Request, res: Response) 
 
 export async function addFavoriteController(req: Request, res: Response) {
   const session = req.session!;
-  const { itemId } = req.params;
+  const { itemId } = req.params as { itemId: string };
   try {
     await setFavorite(session.jellyfinUserId, session.jellyfinToken, itemId, true);
     res.json({ isFavorite: true });
@@ -72,7 +72,7 @@ export async function addFavoriteController(req: Request, res: Response) {
 
 export async function removeFavoriteController(req: Request, res: Response) {
   const session = req.session!;
-  const { itemId } = req.params;
+  const { itemId } = req.params as { itemId: string };
   try {
     await setFavorite(session.jellyfinUserId, session.jellyfinToken, itemId, false);
     res.json({ isFavorite: false });
@@ -102,7 +102,7 @@ export async function listAlbumsController(req: Request, res: Response) {
 export async function getAlbumController(req: Request, res: Response) {
   const session = req.session!;
   const sessionToken = req.rawToken!;
-  const { albumId } = req.params;
+  const { albumId } = req.params as { albumId: string };
 
   try {
     const [albumInfo, items] = await Promise.all([
@@ -146,7 +146,7 @@ export async function listArtistsController(req: Request, res: Response) {
 export async function getArtistController(req: Request, res: Response) {
   const session = req.session!;
   const sessionToken = req.rawToken!;
-  const { artistId } = req.params;
+  const { artistId } = req.params as { artistId: string };
 
   try {
     const [artistInfo, albumItems, trackItems] = await Promise.all([
@@ -197,7 +197,7 @@ export async function listPlaylistsController(req: Request, res: Response) {
 export async function getPlaylistController(req: Request, res: Response) {
   const session = req.session!;
   const sessionToken = req.rawToken!;
-  const { playlistId } = req.params;
+  const { playlistId } = req.params as { playlistId: string };
 
   try {
     const [playlistInfo, items] = await Promise.all([
@@ -239,7 +239,7 @@ export async function createPlaylistController(req: Request, res: Response) {
 
 export async function addTrackToPlaylistController(req: Request, res: Response) {
   const session = req.session!;
-  const { playlistId, itemId } = req.params;
+  const { playlistId, itemId } = req.params as { playlistId: string; itemId: string };
 
   try {
     await addItemToPlaylist(session.jellyfinToken, session.jellyfinUserId, playlistId, itemId);
@@ -251,7 +251,7 @@ export async function addTrackToPlaylistController(req: Request, res: Response) 
 
 export async function removeTrackFromPlaylistController(req: Request, res: Response) {
   const session = req.session!;
-  const { playlistId, entryId } = req.params;
+  const { playlistId, entryId } = req.params as { playlistId: string; entryId: string };
 
   try {
     await removeItemFromPlaylist(session.jellyfinToken, session.jellyfinUserId, playlistId, entryId);

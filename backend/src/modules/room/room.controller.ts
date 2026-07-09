@@ -10,7 +10,7 @@ export function createRoomController(req: Request, res: Response) {
 }
 
 export function getRoomController(req: Request, res: Response) {
-  const { code } = req.params;
+  const { code } = req.params as { code: string };
   const room = getRoomByCode(code);
 
   if (!room) return res.status(404).json({ error: 'Sala no encontrada' });
@@ -19,7 +19,7 @@ export function getRoomController(req: Request, res: Response) {
 
 export function joinRoomController(req: Request, res: Response) {
   const session = req.session!;
-  const { code } = req.params;
+  const { code } = req.params as { code: string };
 
   const room = joinRoom(code, session.jellyfinUserId, session.jellyfinUsername);
   if (!room) return res.status(404).json({ error: 'Sala no encontrada' });
@@ -29,15 +29,15 @@ export function joinRoomController(req: Request, res: Response) {
 
 export function leaveRoomController(req: Request, res: Response) {
   const session = req.session!;
-  const { roomId } = req.params;
+  const { roomId } = req.params as { roomId: string };
 
   const room = leaveRoom(roomId, session.jellyfinUserId);
-  res.json({ room: room ?? null }); // null si la sala se cerró porque quedó vacía
+  res.json({ room: room ?? null });
 }
 
 export function setGuestControlController(req: Request, res: Response) {
   const session = req.session!;
-  const { roomId } = req.params;
+  const { roomId } = req.params as { roomId: string };
   const { allowGuestControl } = req.body ?? {};
 
   const room = setGuestControl(roomId, session.jellyfinUserId, Boolean(allowGuestControl));

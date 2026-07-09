@@ -45,7 +45,7 @@ export default function AlbumDetail() {
 
       <div className="flex items-end gap-6 mb-8">
         <img
-          src={album.coverUrl}
+          src={album.coverUrl ?? undefined}
           alt={album.name}
           className="w-48 h-48 rounded-lg object-cover bg-neutral-800 shadow-2xl flex-shrink-0"
         />

@@ -7,11 +7,10 @@ import { acquireTranscodeSlot } from './transcode-limiter';
 
 const BITRATE = 128000;
 
-// Evita que dos requests transcodeen el mismo item al mismo tiempo
 const inFlight = new Map<string, Promise<void>>();
 
 export async function streamController(req: Request, res: Response) {
-  const { itemId } = req.params;
+  const { itemId } = req.params as { itemId: string };
   const session = req.session!;
   const cacheKey = `${itemId}-${BITRATE}`;
 
@@ -20,8 +19,6 @@ export async function streamController(req: Request, res: Response) {
   }
 
   try {
-    // Si ya hay un transcode de este mismo item en curso, espera a que termine
-    // en vez de arrancar uno nuevo (esto es lo que causaba la condición de carrera)
     if (inFlight.has(cacheKey)) {
       await inFlight.get(cacheKey);
       return serveFromCache(itemId, req.headers.range, res);
@@ -63,14 +60,13 @@ function transcodeAndCache(itemId: string, jellyfinToken: string): Promise<void>
 
       fileStream.on('finish', () => {
         try {
-          // Si otra request ya cacheó este item mientras tanto, descarta el tmp
           if (!fs.existsSync(cachePath)) {
             fs.renameSync(tmpPath, cachePath);
           } else {
             fs.unlink(tmpPath, () => {});
           }
-        } catch (renameErr) {
-          fs.unlink(tmpPath, () => {}); // nunca dejar que esto tumbe el proceso
+        } catch {
+          fs.unlink(tmpPath, () => {});
         }
         release();
         resolve();

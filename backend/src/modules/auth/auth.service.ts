@@ -14,7 +14,7 @@ export async function login(username: string, password: string) {
   };
 
   const sessionToken = jwt.sign(payload, env.jwtSecret, {
-    expiresIn: env.jwtExpiresIn,
+    expiresIn: env.jwtExpiresIn as jwt.SignOptions['expiresIn'],
   });
 
   return {

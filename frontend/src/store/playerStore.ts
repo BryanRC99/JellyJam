@@ -1,16 +1,6 @@
 import { create } from 'zustand';
 import { useMemo } from 'react';
-
-export interface Track {
-  id: string;
-  title: string;
-  artist: string;
-  album: string;
-  durationSeconds: number;
-  streamUrl: string;
-  coverUrl: string;
-  isFavorite: boolean;
-}
+import type { Track } from '../types/track';
 
 export type RepeatMode = 'off' | 'all' | 'one';
 

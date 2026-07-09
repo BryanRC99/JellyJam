@@ -28,15 +28,15 @@ export default function Room() {
   }
 
   function handleCopyCode() {
-    navigator.clipboard.writeText(room.code);
+    navigator.clipboard.writeText(room!.code);
     showToast('Código copiado');
   }
 
   async function handleToggleGuestControl() {
     try {
-      await apiFetch(`/rooms/${room.id}/permissions`, {
+      await apiFetch(`/rooms/${room!.id}/permissions`, {
         method: 'PATCH',
-        body: JSON.stringify({ allowGuestControl: !room.allowGuestControl }),
+        body: JSON.stringify({ allowGuestControl: !room!.allowGuestControl }),
       });
     } catch {
       showToast('No se pudo cambiar el permiso', 'error');

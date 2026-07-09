@@ -9,6 +9,8 @@ export function useUnlockAudio(refs: Array<RefObject<HTMLAudioElement | null>>) 
       if (unlocked) return;
       unlocked = true;
 
+        
+
       refs.forEach((ref) => {
         const audio = ref.current;
         if (!audio) return;
