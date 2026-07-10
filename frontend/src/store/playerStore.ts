@@ -27,6 +27,7 @@ interface PlayerState {
   volume: number;
   muted: boolean;
 
+
   playTrack: (track: Track, queue?: Track[]) => void;
   addToQueue: (track: Track) => void;
   togglePlay: () => void;
@@ -37,6 +38,13 @@ interface PlayerState {
   setVolume: (v: number) => void;
   toggleMute: () => void;
   updateTrackFavorite: (trackId: string, isFavorite: boolean) => void;
+
+  progress: number;
+  setProgress: (seconds: number) => void;
+  seekRequest: number | null;
+  requestSeek: (seconds: number) => void;
+  clearSeekRequest: () => void;
+
 }
 
 export const usePlayerStore = create<PlayerState>((set, get) => ({
@@ -48,6 +56,12 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
   repeatMode: 'off',
   volume: 1,
   muted: false,
+
+  progress: 0,
+  setProgress: (seconds) => set({ progress: seconds }),
+  seekRequest: null,
+  requestSeek: (seconds) => set({ seekRequest: seconds }),
+  clearSeekRequest: () => set({ seekRequest: null }),
 
   playTrack: (track, queueParam) => {
     const list = queueParam ?? get().queue;

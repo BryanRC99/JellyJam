@@ -34,30 +34,27 @@ export default function Login() {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-neutral-950 overflow-hidden px-4">
-      {/* Glow de fondo */}
       <div className="absolute w-[380px] h-[380px] rounded-full bg-violet-600/10 blur-[100px]" />
 
       <form
         onSubmit={handleSubmit}
-        className="relative z-10 w-full max-w-[360px] rounded-2xl border border-neutral-800/80 bg-neutral-900/70 backdrop-blur-xl shadow-2xl p-6"
+        className="relative z-10 w-full max-w-[320px] rounded-2xl border border-neutral-800/80 bg-neutral-900/70 backdrop-blur-xl shadow-2xl p-5"
       >
-        {/* Header Compacto */}
-        <div className="flex flex-col items-center mb-6">
+        <div className="flex flex-col items-center mb-5">
           <img
             src="/logoV1.png"
             alt="JellyJam"
-            className="w-15 h-15 mb-2 select-none"
+            className="w-12 h-12 mb-1.5 select-none object-contain"
             draggable={false}
           />
-          <h1 className="text-2xl font-bold tracking-tight text-neutral-100">
+          <h1 className="text-xl font-bold tracking-tight text-neutral-100">
             JellyJam
           </h1>
         </div>
 
-        {/* Inputs */}
-        <div className="space-y-4 mb-5">
+        <div className="space-y-3 mb-4">
           <div>
-            <label className="block text-xs font-medium text-neutral-400 mb-1.5">
+            <label className="block text-xs font-medium text-neutral-400 mb-1">
               Usuario
             </label>
             <input
@@ -70,7 +67,7 @@ export default function Login() {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-neutral-400 mb-1.5">
+            <label className="block text-xs font-medium text-neutral-400 mb-1">
               Contraseña
             </label>
             <input
@@ -82,16 +79,14 @@ export default function Login() {
           </div>
         </div>
 
-        {/* Mensaje de Error */}
         {error && (
-          <div className="mb-4 rounded-xl border border-red-500/20 bg-red-500/10 px-3 py-2">
+          <div className="mb-3 rounded-xl border border-red-500/20 bg-red-500/10 px-3 py-2">
             <p className="text-xs text-red-400 text-center font-medium">
               {error}
             </p>
           </div>
         )}
 
-        {/* Botón de Acción */}
         <button
           type="submit"
           disabled={loading}
@@ -100,8 +95,7 @@ export default function Login() {
           {loading ? 'Entrando...' : 'Entrar'}
         </button>
 
-        {/* Footer minimalista */}
-        <p className="mt-5 text-center text-[10px] text-neutral-600 tracking-wider uppercase font-medium">
+        <p className="mt-4 text-center text-[10px] text-neutral-600 tracking-wider uppercase font-medium">
           Powered by Jellyfin
         </p>
       </form>

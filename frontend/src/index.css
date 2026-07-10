@@ -1,5 +1,30 @@
 @import "tailwindcss";
 
+/* Scrollbar oscuro para toda la app */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #404040 #0a0a0a; /* thumb track - neutral-700 sobre neutral-950 */
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #0a0a0a; /* neutral-950 */
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #404040; /* neutral-700 */
+  border-radius: 9999px;
+  border: 2px solid #0a0a0a;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #525252; /* neutral-600 */
+}
+
 html, body, #root {
   height: 100%;
   overflow: hidden;

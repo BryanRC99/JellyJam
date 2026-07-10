@@ -4,6 +4,7 @@ import Player from '../Player';
 import ToastContainer from '../common/ToastContainer';
 import { useTracks } from '../../hooks/useTracks';
 import { useRoomKickWatcher } from '../../hooks/useRoomKickWatcher';
+import NowPlaying from '../NowPlaying';
 
 export default function AppLayout() {
   useTracks();
@@ -19,6 +20,7 @@ export default function AppLayout() {
       </div>
       <Player />
       <ToastContainer />
+      <NowPlaying />
     </div>
   );
 }
