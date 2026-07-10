@@ -292,3 +292,16 @@ export async function removeItemFromPlaylist(
 
   if (!res.ok) throw new Error(`Error al quitar la canción de la playlist (${res.status})`);
 }
+
+export async function getAudioItemById(userId: string, token: string, itemId: string) {
+  const params = new URLSearchParams({
+    Fields: 'Artists,Album,RunTimeTicks',
+  });
+
+  const res = await fetch(`${env.jellyfinServerUrl}/Users/${userId}/Items/${itemId}?${params}`, {
+    headers: { 'X-Emby-Token': token },
+  });
+
+  if (!res.ok) throw new Error(`Error al obtener la canción (${res.status})`);
+  return res.json();
+}

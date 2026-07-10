@@ -16,6 +16,7 @@ import {
   removeTrackFromPlaylistController,
 } from './music.controller';
 import { streamController } from './stream.controller';
+import { getLyricsController } from '../lyrics/lyrics.controller';
 
 export const musicRouter = Router();
 musicRouter.get('/tracks', requireAuth, listTracksController);
@@ -32,3 +33,4 @@ musicRouter.post('/playlists', requireAuth, createPlaylistController);
 musicRouter.get('/playlists/:playlistId', requireAuth, getPlaylistController);
 musicRouter.post('/playlists/:playlistId/tracks/:itemId', requireAuth, addTrackToPlaylistController);
 musicRouter.delete('/playlists/:playlistId/entries/:entryId', requireAuth, removeTrackFromPlaylistController);
+musicRouter.get('/lyrics/:itemId', requireAuth, getLyricsController);
