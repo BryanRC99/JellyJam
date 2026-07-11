@@ -29,11 +29,12 @@ function formatTime(seconds: number) {
 type Slot = 'A' | 'B';
 
 const playerShellClass =
-  'relative z-20 min-h-20 border-t border-neutral-800 bg-neutral-950/95 px-4 py-2 grid grid-cols-[minmax(0,1fr)_auto] md:grid-cols-[minmax(12rem,22rem)_minmax(18rem,1fr)_minmax(10rem,16rem)] items-center gap-x-4 gap-y-1.5';
+  'relative z-20 min-h-24 md:min-h-20 border-t border-neutral-800 bg-neutral-950/95 px-3 sm:px-4 py-2 grid grid-cols-[minmax(0,1fr)_auto] md:grid-cols-[minmax(12rem,22rem)_minmax(18rem,1fr)_minmax(10rem,16rem)] items-center gap-x-2 sm:gap-x-4 gap-y-1.5';
 const playerControlsClass =
   'row-start-2 col-span-2 md:row-start-1 md:col-span-1 md:col-start-2 min-w-0 flex flex-col gap-1.5';
 const playerActionsClass =
-  'row-start-1 col-start-2 md:col-start-3 flex items-center justify-end gap-3';
+  'row-start-1 col-start-2 md:col-start-3 flex items-center justify-end gap-1.5 sm:gap-3';
+const fixedPanelClass = 'fixed right-3 bottom-24 md:bottom-20 z-50';
 
 export default function Player() {
   const room = useRoomStore((s) => s.room);
@@ -270,6 +271,12 @@ function RoomPlayer({ room, setPlayback, seek, transferHost, kickMember, leaveRo
           {muted || volume === 0 ? <VolumeX size={18} /> : <Volume2 size={18} />}
         </button>
 
+        {/* En el original este botón vivía solo dentro del bloque hidden md:flex —
+            en mobile no había forma de abrir la pantalla completa. Lo sacamos aparte. */}
+        <button onClick={() => openNowPlaying()} className="md:hidden text-neutral-400 hover:text-white transition shrink-0" title="Pantalla completa">
+          <Maximize2 size={18} />
+        </button>
+
         <div className="hidden md:flex items-center gap-2 w-28 lg:w-32 shrink-0">
           <button onClick={toggleMute} className="text-neutral-400 hover:text-white transition" title="Volumen">
             {muted || volume === 0 ? <VolumeX size={18} /> : <Volume2 size={18} />}
@@ -297,7 +304,7 @@ function RoomPlayer({ room, setPlayback, seek, transferHost, kickMember, leaveRo
               setShowMembers(false);
               setShowQueue(false);
             }}
-            className="relative flex items-center gap-2 bg-neutral-800 hover:bg-neutral-700 transition rounded-full px-3 py-1.5 shrink-0 text-neutral-300"
+            className="relative flex items-center gap-2 bg-neutral-800 hover:bg-neutral-700 transition rounded-full px-2.5 sm:px-3 py-1.5 shrink-0 text-neutral-300"
             title="Letras"
           >
             <Mic2 size={15} />
@@ -306,7 +313,7 @@ function RoomPlayer({ room, setPlayback, seek, transferHost, kickMember, leaveRo
             )}
           </button>
           {showLyrics && (
-            <div className="fixed right-3 bottom-20 z-50 w-[min(22rem,calc(100vw-1.5rem))] h-96 bg-neutral-900 border border-neutral-700 rounded-xl shadow-2xl overflow-hidden flex flex-col">
+            <div className={`${fixedPanelClass} w-[min(22rem,calc(100vw-1.5rem))] h-96 bg-neutral-900 border border-neutral-700 rounded-xl shadow-2xl overflow-hidden flex flex-col`}>
               <div className="flex items-center justify-between p-3 border-b border-neutral-800 shrink-0">
                 <p className="text-sm font-semibold">Letras</p>
                 <button
@@ -340,7 +347,7 @@ function RoomPlayer({ room, setPlayback, seek, transferHost, kickMember, leaveRo
               setShowMembers(false);
               setShowLyrics(false);
             }}
-            className="flex items-center gap-2 bg-neutral-800 hover:bg-neutral-700 transition rounded-full px-3 py-1.5 shrink-0"
+            className="flex items-center gap-2 bg-neutral-800 hover:bg-neutral-700 transition rounded-full px-2.5 sm:px-3 py-1.5 shrink-0"
             title="Cola de la sala"
           >
             <ListMusic size={15} className="text-neutral-300" />
@@ -348,7 +355,7 @@ function RoomPlayer({ room, setPlayback, seek, transferHost, kickMember, leaveRo
           </button>
 
           {showQueue && (
-            <div className="fixed right-3 bottom-20 z-50 w-[min(22rem,calc(100vw-1.5rem))] bg-neutral-900 border border-neutral-700 rounded-xl shadow-2xl overflow-hidden">
+            <div className={`${fixedPanelClass} w-[min(22rem,calc(100vw-1.5rem))] bg-neutral-900 border border-neutral-700 rounded-xl shadow-2xl overflow-hidden`}>
               <div className="p-3 border-b border-neutral-800">
                 <p className="text-sm font-semibold">Cola del Jam</p>
                 <p className="text-xs text-neutral-500 mt-0.5">{room.queue.length} canciones en sala</p>
@@ -394,7 +401,7 @@ function RoomPlayer({ room, setPlayback, seek, transferHost, kickMember, leaveRo
               setShowQueue(false);
               setShowLyrics(false);
             }}
-            className="flex items-center gap-2 bg-neutral-800 hover:bg-neutral-700 transition rounded-full px-3 py-1.5 shrink-0"
+            className="flex items-center gap-2 bg-neutral-800 hover:bg-neutral-700 transition rounded-full px-2.5 sm:px-3 py-1.5 shrink-0"
             title="Miembros de la sala"
           >
             <Users size={15} className="text-green-500" />
@@ -402,7 +409,7 @@ function RoomPlayer({ room, setPlayback, seek, transferHost, kickMember, leaveRo
           </button>
 
           {showMembers && (
-            <div className="fixed right-3 bottom-20 z-50 w-[min(18rem,calc(100vw-1.5rem))] bg-neutral-900 border border-neutral-700 rounded-xl shadow-2xl overflow-hidden">
+            <div className={`${fixedPanelClass} w-[min(18rem,calc(100vw-1.5rem))] bg-neutral-900 border border-neutral-700 rounded-xl shadow-2xl overflow-hidden`}>
               <div className="p-3 border-b border-neutral-800">
                 <p className="text-xs text-neutral-400 mb-1">Código de la sala</p>
                 <button onClick={handleCopyCode} className="flex items-center gap-2 text-sm font-mono font-bold text-green-500">
@@ -614,6 +621,11 @@ function SoloPlayer() {
           {muted || volume === 0 ? <VolumeX size={18} /> : <Volume2 size={18} />}
         </button>
 
+        {/* Botón de pantalla completa ahora accesible también en mobile */}
+        <button onClick={() => openNowPlaying()} className="md:hidden text-neutral-400 hover:text-white transition shrink-0" title="Pantalla completa">
+          <Maximize2 size={18} />
+        </button>
+
         <div className="hidden md:flex items-center gap-2 w-28 lg:w-32 shrink-0">
           <button onClick={toggleMute} className="text-neutral-400 hover:text-white transition" title="Volumen">
             {muted || volume === 0 ? <VolumeX size={18} /> : <Volume2 size={18} />}
@@ -637,7 +649,7 @@ function SoloPlayer() {
         <div ref={lyricsMenuRef} className="relative">
           <button
             onClick={() => setShowLyrics((v) => !v)}
-            className="relative flex items-center gap-2 bg-neutral-800 hover:bg-neutral-700 transition rounded-full px-3 py-1.5 shrink-0 text-neutral-300"
+            className="relative flex items-center gap-2 bg-neutral-800 hover:bg-neutral-700 transition rounded-full px-2.5 sm:px-3 py-1.5 shrink-0 text-neutral-300"
             title="Letras"
           >
             <Mic2 size={15} />
@@ -646,7 +658,7 @@ function SoloPlayer() {
             )}
           </button>
           {showLyrics && (
-            <div className="fixed right-3 bottom-20 z-50 w-[min(22rem,calc(100vw-1.5rem))] h-96 bg-neutral-900 border border-neutral-700 rounded-xl shadow-2xl overflow-hidden flex flex-col">
+            <div className={`${fixedPanelClass} w-[min(22rem,calc(100vw-1.5rem))] h-96 bg-neutral-900 border border-neutral-700 rounded-xl shadow-2xl overflow-hidden flex flex-col`}>
               <div className="flex items-center justify-between p-3 border-b border-neutral-800 shrink-0">
                 <p className="text-sm font-semibold">Letras</p>
                 <button

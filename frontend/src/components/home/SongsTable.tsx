@@ -13,7 +13,10 @@ interface SongsTableProps {
   onRemoveFromPlaylist?: (track: Track) => void;
 }
 
-const GRID_COLS = 'grid-cols-[24px_1fr_180px_72px_64px]';
+// En mobile la columna "Álbum" no se renderiza (hidden), así que el grid
+// tiene 4 columnas reales en vez de 5. Desde sm: se agrega la 5ta columna
+// para el álbum, coincidiendo con los elementos que sí se muestran.
+const GRID_COLS = 'grid-cols-[24px_1fr_72px_56px] sm:grid-cols-[24px_1fr_180px_72px_64px]';
 
 export default function SongsTable({
   tracks,
@@ -28,7 +31,7 @@ export default function SongsTable({
     <div className="w-full text-left select-none">
       {/* Header */}
       <div
-        className={`grid ${GRID_COLS} gap-4 px-4 py-2 border-b border-neutral-800/60 text-neutral-400 text-xs font-medium uppercase tracking-wide`}
+        className={`grid ${GRID_COLS} gap-3 sm:gap-4 px-3 sm:px-4 py-2 border-b border-neutral-800/60 text-neutral-400 text-xs font-medium uppercase tracking-wide`}
       >
         <div className="text-center">#</div>
         <div>Título</div>
@@ -51,16 +54,17 @@ export default function SongsTable({
                 setOpenMenuId(null);
                 onTrackSelect?.(track);
               }}
-              className={`group grid ${GRID_COLS} gap-4 px-4 py-1.5 rounded-lg items-center cursor-pointer transition-colors duration-150 ${
+              className={`group grid ${GRID_COLS} gap-3 sm:gap-4 px-3 sm:px-4 py-2 sm:py-1.5 rounded-lg items-center cursor-pointer transition-colors duration-150 ${
                 isCurrent
                   ? 'bg-neutral-800/50'
                   : 'hover:bg-neutral-800/70'
               }`}
             >
-              {/* Número / Play */}
+              {/* Número / Play — el hover de "reemplazar por ícono de play" sigue siendo
+                  solo para desktop; en mobile no aplica porque no hay cursor que "pase por encima" */}
               <div className="flex items-center justify-center relative w-4 h-4">
                 <span
-                  className={`text-sm transition-opacity group-hover:opacity-0 ${
+                  className={`text-sm transition-opacity md:group-hover:opacity-0 ${
                     isCurrent
                       ? 'text-green-500 font-semibold'
                       : 'text-neutral-500'
@@ -69,7 +73,7 @@ export default function SongsTable({
                   {index + 1}
                 </span>
 
-                <div className="absolute opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <div className="absolute opacity-0 md:group-hover:opacity-100 transition-opacity hidden md:flex items-center justify-center">
                   <Play
                     size={13}
                     fill={isCurrent ? '#22c55e' : 'white'}
@@ -104,7 +108,7 @@ export default function SongsTable({
               />
 
               {/* Duración */}
-              <div className="flex justify-end pr-2 text-xs text-neutral-500 font-medium tabular-nums">
+              <div className="flex justify-end pr-1 sm:pr-2 text-xs text-neutral-500 font-medium tabular-nums">
                 {formatDuration(track.durationSeconds)}
               </div>
             </div>

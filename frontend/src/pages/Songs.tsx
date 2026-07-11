@@ -26,11 +26,11 @@ export default function Songs() {
   }, [tracks, search]);
 
   if (isLoading) {
-    return <div className="p-8 text-neutral-400">Cargando canciones...</div>;
+    return <div className="p-4 sm:p-8 text-neutral-400">Cargando canciones...</div>;
   }
 
   if (error) {
-    return <div className="p-8 text-red-400">No se pudo cargar la biblioteca. Intenta de nuevo.</div>;
+    return <div className="p-4 sm:p-8 text-red-400">No se pudo cargar la biblioteca. Intenta de nuevo.</div>;
   }
 
   function handleSelect(track: Track) {
@@ -38,10 +38,10 @@ export default function Songs() {
   }
 
   return (
-    <div className="px-8 py-6">
+    <div className="px-4 sm:px-6 md:px-8 py-4 sm:py-6">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-white">Canciones</h1>
-        <p className="mt-2 text-neutral-400">{tracks?.length ?? 0} canciones en tu biblioteca</p>
+        <h1 className="text-2xl sm:text-3xl font-bold text-white">Canciones</h1>
+        <p className="mt-2 text-neutral-400 text-sm sm:text-base">{tracks?.length ?? 0} canciones en tu biblioteca</p>
       </div>
 
       <SearchBar value={search} onChange={setSearch} />

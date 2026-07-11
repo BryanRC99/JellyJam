@@ -16,7 +16,7 @@ export default function Room() {
   const navigate = useNavigate();
 
   if (!room) {
-    return <div className="p-8 text-neutral-400">Conectando a la sala...</div>;
+    return <div className="p-4 sm:p-8 text-neutral-400">Conectando a la sala...</div>;
   }
 
   const isHost = room.hostUserId === user?.id;
@@ -60,14 +60,14 @@ export default function Room() {
   }
 
   return (
-    <div className="p-8 text-white max-w-lg">
+    <div className="p-4 sm:p-8 text-white max-w-lg mx-auto md:mx-0">
       <div className="flex items-center gap-2 mb-1">
-        <Users size={20} className="text-green-500" />
-        <h1 className="text-2xl font-bold">Sala {room.code}</h1>
+        <Users size={20} className="text-green-500 shrink-0" />
+        <h1 className="text-xl sm:text-2xl font-bold truncate">Sala {room.code}</h1>
       </div>
-      <p className="text-neutral-400 mb-6">Comparte el código o el link para invitar amigos</p>
+      <p className="text-neutral-400 mb-6 text-sm sm:text-base">Comparte el código o el link para invitar amigos</p>
 
-      <div className="flex gap-2 mb-8">
+      <div className="flex flex-col sm:flex-row gap-2 mb-8">
         <button
           onClick={handleCopyCode}
           className="flex-1 flex items-center justify-center gap-2 bg-neutral-800 hover:bg-neutral-700 transition rounded-lg px-4 py-2.5 text-sm font-mono font-bold"
@@ -84,14 +84,14 @@ export default function Room() {
         </button>
       </div>
 
-      <h2 className="font-semibold mb-3">Miembros ({room.members.length})</h2>
+      <h2 className="font-semibold mb-3 text-sm sm:text-base">Miembros ({room.members.length})</h2>
       <div className="mb-8">
         <MemberList room={room} currentUserId={user?.id} onTransferHost={handleTransferHost} onKick={handleKick} />
       </div>
 
       {isHost && (
-        <div className="flex items-center justify-between bg-neutral-900 rounded-lg px-4 py-3 mb-8">
-          <div>
+        <div className="flex items-center justify-between gap-4 bg-neutral-900 rounded-lg px-4 py-3 mb-8">
+          <div className="min-w-0">
             <p className="text-sm font-medium">Control de invitados</p>
             <p className="text-xs text-neutral-500">Permitir que cualquiera pause/salte canciones</p>
           </div>

@@ -46,11 +46,11 @@ export default function Home() {
   }, [tracks]);
 
   if (isLoading) {
-    return <div className="p-8 text-neutral-400">Cargando biblioteca...</div>;
+    return <div className="p-4 sm:p-8 text-neutral-400">Cargando biblioteca...</div>;
   }
 
   if (error) {
-    return <div className="p-8 text-red-400">No se pudo cargar la biblioteca. Intenta de nuevo.</div>;
+    return <div className="p-4 sm:p-8 text-red-400">No se pudo cargar la biblioteca. Intenta de nuevo.</div>;
   }
 
   function handlePlay(track: Track, queue: Track[]) {
@@ -58,7 +58,7 @@ export default function Home() {
   }
 
   return (
-    <div className="px-8 py-6">
+    <div className="px-4 sm:px-6 md:px-8 py-4 sm:py-6">
       <HomeHeader {...stats} />
       <SearchBar value={search} onChange={setSearch} />
 

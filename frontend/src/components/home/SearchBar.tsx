@@ -12,13 +12,13 @@ export default function SearchBar({
   placeholder = 'Buscar canciones, artistas o álbumes...',
 }: SearchBarProps) {
   return (
-    <div className="mb-6">
+    <div className="mb-5 sm:mb-6">
       <div
         className="
           group
           flex
           items-center
-          gap-3
+          gap-2 sm:gap-3
 
           rounded-xl
 
@@ -27,8 +27,8 @@ export default function SearchBar({
 
           bg-neutral-900
 
-          px-4
-          py-3
+          px-3 sm:px-4
+          py-2.5 sm:py-3
 
           transition-all
           duration-200
@@ -39,8 +39,13 @@ export default function SearchBar({
         "
       >
         <Search
+          size={18}
+          className="text-neutral-400 group-focus-within:text-green-500 transition sm:hidden"
+        />
+
+        <Search
           size={20}
-          className="text-neutral-400 group-focus-within:text-green-500 transition"
+          className="hidden sm:block text-neutral-400 group-focus-within:text-green-500 transition"
         />
 
         <input
@@ -68,8 +73,13 @@ export default function SearchBar({
             "
           >
             <X
+              size={15}
+              className="text-neutral-400 sm:hidden"
+            />
+
+            <X
               size={16}
-              className="text-neutral-400"
+              className="hidden sm:block text-neutral-400"
             />
           </button>
         )}

@@ -35,7 +35,7 @@ export default function SongContextMenu({ track, onToggleFavorite, onRemoveFromP
 
   return (
     <div
-      className="absolute right-0 top-8 z-50 w-64 overflow-hidden rounded-lg border border-neutral-700 bg-neutral-900 shadow-2xl"
+      className="absolute right-0 top-8 z-50 w-56 sm:w-64 max-h-[70vh] overflow-y-auto overscroll-contain rounded-lg border border-neutral-700 bg-neutral-900 shadow-2xl"
       onClick={(e) => e.stopPropagation()}
     >
       {view === 'add-to-playlist' ? (

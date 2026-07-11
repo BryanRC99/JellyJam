@@ -27,48 +27,48 @@ export default function HomeHeader({
   artistsCount,
 }: HomeHeaderProps) {
   return (
-    <header className="mb-10">
+    <header className="mb-8 sm:mb-10">
 
-      <p className="text-sm uppercase tracking-[0.3em] text-neutral-500 mb-3">
+      <p className="text-xs sm:text-sm uppercase tracking-[0.3em] text-neutral-500 mb-2 sm:mb-3">
         {getCurrentDate()}
       </p>
 
-      <h1 className="text-5xl font-bold tracking-tight">
+      <h1 className="text-3xl sm:text-5xl font-bold tracking-tight">
         {getGreeting()}
       </h1>
 
-      <p className="mt-3 text-neutral-400 text-lg">
+      <p className="mt-2 sm:mt-3 text-sm sm:text-lg text-neutral-400">
         Bienvenido a tu biblioteca musical.
       </p>
 
-      <div className="flex flex-wrap gap-8 mt-8">
+      <div className="flex flex-wrap gap-5 sm:gap-8 mt-6 sm:mt-8">
 
         <div>
-          <p className="text-3xl font-bold">
+          <p className="text-2xl sm:text-3xl font-bold">
             {tracksCount}
           </p>
 
-          <p className="text-sm text-neutral-500">
+          <p className="text-xs sm:text-sm text-neutral-500">
             Canciones
           </p>
         </div>
 
         <div>
-          <p className="text-3xl font-bold">
+          <p className="text-2xl sm:text-3xl font-bold">
             {albumsCount}
           </p>
 
-          <p className="text-sm text-neutral-500">
+          <p className="text-xs sm:text-sm text-neutral-500">
             Álbumes
           </p>
         </div>
 
         <div>
-          <p className="text-3xl font-bold">
+          <p className="text-2xl sm:text-3xl font-bold">
             {artistsCount}
           </p>
 
-          <p className="text-sm text-neutral-500">
+          <p className="text-xs sm:text-sm text-neutral-500">
             Artistas
           </p>
         </div>

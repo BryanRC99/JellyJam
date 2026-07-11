@@ -29,14 +29,14 @@ export default function AddToPlaylistMenu({ track, onBack, onDone }: Props) {
 
   return (
     <div>
-      <div className="flex items-center gap-2 px-3 py-2 border-b border-neutral-800">
-        <button onClick={onBack} className="text-neutral-400 hover:text-white">
+      <div className="flex items-center gap-2 px-3 py-2.5 sm:py-2 border-b border-neutral-800">
+        <button onClick={onBack} className="text-neutral-400 hover:text-white p-0.5">
           <ArrowLeft size={16} />
         </button>
         <span className="text-sm font-medium">Agregar a playlist</span>
       </div>
 
-      <div className="max-h-56 overflow-y-auto">
+      <div className="max-h-56 overflow-y-auto overscroll-contain">
         {isLoading && <p className="px-3 py-3 text-xs text-neutral-500">Cargando playlists...</p>}
 
         {!isLoading && playlists?.length === 0 && (
@@ -47,7 +47,7 @@ export default function AddToPlaylistMenu({ track, onBack, onDone }: Props) {
           <button
             key={playlist.id}
             onClick={() => handleAdd(playlist.id, playlist.name)}
-            className="w-full flex items-center justify-between px-3 py-2 text-sm text-neutral-200 hover:bg-neutral-800 transition-colors"
+            className="w-full flex items-center justify-between px-3 py-2.5 sm:py-2 text-sm text-neutral-200 hover:bg-neutral-800 transition-colors"
           >
             <span className="truncate">{playlist.name}</span>
             <span className="text-xs text-neutral-500 flex-shrink-0 ml-2">{playlist.trackCount}</span>
@@ -64,16 +64,17 @@ export default function AddToPlaylistMenu({ track, onBack, onDone }: Props) {
               onChange={(e) => setName(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
               placeholder="Nombre de la playlist"
-              className="flex-1 bg-neutral-800 rounded px-2 py-1.5 text-sm outline-none focus:ring-2 focus:ring-green-500"
+              // text-base (16px) evita el auto-zoom de iOS Safari al enfocar el input
+              className="flex-1 min-w-0 bg-neutral-800 rounded px-2 py-2 sm:py-1.5 text-base sm:text-sm outline-none focus:ring-2 focus:ring-green-500"
             />
-            <button onClick={handleCreate} className="text-green-500 hover:text-green-400 flex-shrink-0">
+            <button onClick={handleCreate} className="text-green-500 hover:text-green-400 flex-shrink-0 p-1">
               <Check size={18} />
             </button>
           </div>
         ) : (
           <button
             onClick={() => setCreating(true)}
-            className="w-full flex items-center gap-3 px-3 py-2 text-sm text-neutral-200 hover:bg-neutral-800 transition-colors"
+            className="w-full flex items-center gap-3 px-3 py-2.5 sm:py-2 text-sm text-neutral-200 hover:bg-neutral-800 transition-colors"
           >
             <Plus size={16} />
             Crear nueva playlist

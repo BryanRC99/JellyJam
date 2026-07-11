@@ -29,7 +29,7 @@ export default function Favorites() {
 
   if (isLoading) {
     return (
-      <div className="p-8 text-neutral-400">
+      <div className="p-4 sm:p-8 text-neutral-400">
         Cargando favoritos...
       </div>
     );
@@ -37,7 +37,7 @@ export default function Favorites() {
 
   if (error) {
     return (
-      <div className="p-8 text-red-400">
+      <div className="p-4 sm:p-8 text-red-400">
         No se pudieron cargar tus favoritos.
       </div>
     );
@@ -48,13 +48,13 @@ export default function Favorites() {
   }
 
   return (
-    <div className="px-8 py-6">
+    <div className="px-4 sm:px-6 md:px-8 py-4 sm:py-6">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white">
+        <h1 className="text-2xl sm:text-3xl font-bold text-white">
           Canciones que te gustan
         </h1>
 
-        <p className="mt-2 text-neutral-400">
+        <p className="mt-2 text-neutral-400 text-sm sm:text-base">
           {tracks?.length ?? 0} canciones favoritas
         </p>
       </div>

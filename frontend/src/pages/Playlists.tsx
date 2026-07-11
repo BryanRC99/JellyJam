@@ -29,15 +29,15 @@ export default function Playlists() {
     if (result?.id) navigate(`/playlists/${result.id}`);
   }
 
-  if (isLoading) return <div className="p-8 text-neutral-400">Cargando playlists...</div>;
-  if (error) return <div className="p-8 text-red-400">No se pudieron cargar tus playlists.</div>;
+  if (isLoading) return <div className="p-4 sm:p-8 text-neutral-400">Cargando playlists...</div>;
+  if (error) return <div className="p-4 sm:p-8 text-red-400">No se pudieron cargar tus playlists.</div>;
 
   return (
-    <div className="px-8 py-6">
-      <div className="mb-6 flex items-center justify-between gap-4">
+    <div className="px-4 sm:px-6 md:px-8 py-4 sm:py-6">
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-white">Playlists</h1>
-          <p className="mt-2 text-neutral-400">{playlists?.length ?? 0} playlists</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white">Playlists</h1>
+          <p className="mt-2 text-neutral-400 text-sm sm:text-base">{playlists?.length ?? 0} playlists</p>
         </div>
 
         {creating ? (
@@ -48,7 +48,8 @@ export default function Playlists() {
               onChange={(e) => setName(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
               placeholder="Nombre de la playlist"
-              className="bg-neutral-800 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-green-500"
+              // text-base (16px) evita el auto-zoom de iOS Safari al enfocar el input
+              className="flex-1 min-w-0 bg-neutral-800 rounded-lg px-3 py-2 text-base sm:text-sm outline-none focus:ring-2 focus:ring-green-500"
             />
             <button
               onClick={handleCreate}
@@ -60,7 +61,7 @@ export default function Playlists() {
         ) : (
           <button
             onClick={() => setCreating(true)}
-            className="flex items-center gap-2 bg-neutral-800 hover:bg-neutral-700 transition px-4 py-2 rounded-lg text-sm font-medium flex-shrink-0"
+            className="flex items-center justify-center gap-2 bg-neutral-800 hover:bg-neutral-700 transition px-4 py-2 rounded-lg text-sm font-medium flex-shrink-0 w-full sm:w-auto"
           >
             <Plus size={16} />
             Nueva playlist
@@ -75,7 +76,7 @@ export default function Playlists() {
           {playlists?.length === 0 ? 'Aún no tienes playlists.' : 'No encontramos playlists que coincidan con tu búsqueda.'}
         </p>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
           {filtered.map((playlist) => (
             <MusicCard
               key={playlist.id}

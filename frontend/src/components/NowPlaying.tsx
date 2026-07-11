@@ -39,30 +39,33 @@ function BackgroundArt({ coverUrl }: { coverUrl: string | undefined }) {
   );
 }
 
+// Botón fijo en la esquina, siempre visible sin importar el tamaño de pantalla
+// ni cómo se apilen las columnas (evita quedar "atrapado" sin forma de cerrar en mobile)
+function CloseButton({ onClose }: { onClose: () => void }) {
+  return (
+    <button
+      onClick={onClose}
+      className="fixed top-3 right-3 sm:top-4 sm:right-4 md:top-6 md:right-6 z-[110] w-9 h-9 rounded-full bg-black/40 hover:bg-black/60 flex items-center justify-center text-neutral-300 hover:text-white transition"
+    >
+      <X size={18} />
+    </button>
+  );
+}
+
 function LyricsPanel({
   trackId,
   progress,
   onSeek,
-  onClose,
 }: {
   trackId: string | undefined;
   progress: number;
   onSeek?: (v: number) => void;
-  onClose: () => void;
 }) {
   return (
     <div className="relative h-full flex flex-col min-w-0 bg-black/20">
-      <div className="relative px-6 md:px-10 pt-6 pb-3 shrink-0">
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-semibold text-white pb-3 border-b-2 border-white">Letras</span>
-          <button
-            onClick={onClose}
-            className="w-9 h-9 rounded-full bg-black/30 hover:bg-black/50 flex items-center justify-center text-neutral-300 hover:text-white transition shrink-0"
-          >
-            <X size={18} />
-          </button>
-        </div>
-        <div className="absolute left-6 right-6 md:left-10 md:right-10 bottom-0 h-px bg-white/10" />
+      <div className="relative px-5 sm:px-6 md:px-10 pt-5 sm:pt-6 pb-3 shrink-0">
+        <span className="text-sm font-semibold text-white pb-3 border-b-2 border-white inline-block pr-12">Letras</span>
+        <div className="absolute left-5 right-5 sm:left-6 sm:right-6 md:left-10 md:right-10 bottom-0 h-px bg-white/10" />
       </div>
 
       <div className="flex-1 min-h-0 min-w-0">
@@ -92,11 +95,9 @@ function SoloNowPlaying({ onClose }: { onClose: () => void }) {
 
   if (!track) {
     return (
-      <div className="fixed inset-0 z-[100] flex items-center justify-center text-neutral-500 bg-neutral-950">
+      <div className="fixed inset-0 z-[100] flex items-center justify-center text-neutral-500 bg-neutral-950 px-4 text-center">
         Nada sonando
-        <button onClick={onClose} className="absolute top-6 right-6 text-neutral-400 hover:text-white transition">
-          <X size={22} />
-        </button>
+        <CloseButton onClose={onClose} />
       </div>
     );
   }
@@ -107,15 +108,20 @@ function SoloNowPlaying({ onClose }: { onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-[100] overflow-hidden">
       <BackgroundArt coverUrl={track.coverUrl} />
+      <CloseButton onClose={onClose} />
 
-      <div className="relative h-full flex flex-col md:flex-row">
-        <div className="w-full md:w-[420px] shrink-0 flex flex-col justify-center px-8 py-10 gap-6">
-          <img src={track.coverUrl} alt="" className="w-56 h-56 md:w-64 md:h-64 rounded-xl object-cover bg-neutral-900 shadow-2xl" />
+      <div className="relative h-full flex flex-col md:flex-row overflow-y-auto md:overflow-visible">
+        <div className="w-full md:w-[420px] shrink-0 flex flex-col justify-center px-5 sm:px-8 pt-14 pb-6 sm:py-10 gap-4 sm:gap-6">
+          <img
+            src={track.coverUrl}
+            alt=""
+            className="w-40 h-40 sm:w-56 sm:h-56 md:w-64 md:h-64 rounded-xl object-cover bg-neutral-900 shadow-2xl"
+          />
 
           <div>
-            <h2 className="text-2xl md:text-3xl font-bold text-white truncate">{track.title}</h2>
-            <p className="text-neutral-300 mt-1 truncate">{track.artist}</p>
-            {track.album && <p className="text-neutral-500 text-sm mt-0.5 truncate">{track.album}</p>}
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white truncate">{track.title}</h2>
+            <p className="text-neutral-300 mt-1 truncate text-sm sm:text-base">{track.artist}</p>
+            {track.album && <p className="text-neutral-500 text-xs sm:text-sm mt-0.5 truncate">{track.album}</p>}
           </div>
 
           <button onClick={() => toggleFavorite(track)} className="w-fit text-neutral-300 hover:text-white transition">
@@ -135,7 +141,7 @@ function SoloNowPlaying({ onClose }: { onClose: () => void }) {
             <span className="text-xs text-neutral-500 w-10 tabular-nums">{formatTime(duration)}</span>
           </div>
 
-          <div className="flex items-center justify-center gap-6">
+          <div className="flex items-center justify-center gap-5 sm:gap-6">
             <button onClick={toggleShuffle} className={shuffle ? 'text-green-500' : 'text-neutral-400 hover:text-white transition'}>
               <Shuffle size={20} />
             </button>
@@ -154,7 +160,7 @@ function SoloNowPlaying({ onClose }: { onClose: () => void }) {
           </div>
 
           <div className="flex items-center gap-3">
-            <button onClick={toggleMute} className="text-neutral-400 hover:text-white transition">
+            <button onClick={toggleMute} className="text-neutral-400 hover:text-white transition shrink-0">
               {muted || volume === 0 ? <VolumeX size={18} /> : <Volume2 size={18} />}
             </button>
             <input
@@ -169,8 +175,8 @@ function SoloNowPlaying({ onClose }: { onClose: () => void }) {
           </div>
         </div>
 
-        <div className="flex-1 min-h-0 min-w-0">
-          <LyricsPanel trackId={track.id} progress={progress} onSeek={requestSeek} onClose={onClose} />
+        <div className="flex-1 min-h-[60vh] md:min-h-0 min-w-0">
+          <LyricsPanel trackId={track.id} progress={progress} onSeek={requestSeek} />
         </div>
       </div>
     </div>
@@ -203,11 +209,9 @@ function RoomNowPlaying({ room, onClose }: { room: any; onClose: () => void }) {
 
   if (!track) {
     return (
-      <div className="fixed inset-0 z-[100] flex items-center justify-center text-neutral-500 bg-neutral-950">
+      <div className="fixed inset-0 z-[100] flex items-center justify-center text-neutral-500 bg-neutral-950 px-4 text-center">
         La cola está vacía
-        <button onClick={onClose} className="absolute top-6 right-6 text-neutral-400 hover:text-white transition">
-          <X size={22} />
-        </button>
+        <CloseButton onClose={onClose} />
       </div>
     );
   }
@@ -236,15 +240,20 @@ function RoomNowPlaying({ room, onClose }: { room: any; onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-[100] overflow-hidden">
       <BackgroundArt coverUrl={track.coverUrl} />
+      <CloseButton onClose={onClose} />
 
-      <div className="relative h-full flex flex-col md:flex-row">
-        <div className="w-full md:w-[420px] shrink-0 flex flex-col justify-center px-8 py-10 gap-6">
-          <img src={track.coverUrl} alt="" className="w-56 h-56 md:w-64 md:h-64 rounded-xl object-cover bg-neutral-900 shadow-2xl" />
+      <div className="relative h-full flex flex-col md:flex-row overflow-y-auto md:overflow-visible">
+        <div className="w-full md:w-[420px] shrink-0 flex flex-col justify-center px-5 sm:px-8 pt-14 pb-6 sm:py-10 gap-4 sm:gap-6">
+          <img
+            src={track.coverUrl}
+            alt=""
+            className="w-40 h-40 sm:w-56 sm:h-56 md:w-64 md:h-64 rounded-xl object-cover bg-neutral-900 shadow-2xl"
+          />
 
           <div>
-            <h2 className="text-2xl md:text-3xl font-bold text-white truncate">{track.title}</h2>
-            <p className="text-neutral-300 mt-1 truncate">{track.artist}</p>
-            <p className="text-green-500 text-sm mt-1">Sala {room.code}</p>
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white truncate">{track.title}</h2>
+            <p className="text-neutral-300 mt-1 truncate text-sm sm:text-base">{track.artist}</p>
+            <p className="text-green-500 text-xs sm:text-sm mt-1">Sala {room.code}</p>
           </div>
 
           <button onClick={() => toggleFavorite(track)} className="w-fit text-neutral-300 hover:text-white transition">
@@ -267,7 +276,7 @@ function RoomNowPlaying({ room, onClose }: { room: any; onClose: () => void }) {
             <span className="text-xs text-neutral-500 w-10 tabular-nums">{formatTime(duration)}</span>
           </div>
 
-          <div className="flex items-center justify-center gap-6">
+          <div className="flex items-center justify-center gap-5 sm:gap-6">
             <button onClick={() => handleSkip(-1)} disabled={!canControl} className="text-neutral-200 hover:text-white transition disabled:opacity-30">
               <SkipBack size={24} fill="currentColor" />
             </button>
@@ -284,7 +293,7 @@ function RoomNowPlaying({ room, onClose }: { room: any; onClose: () => void }) {
           </div>
 
           <div className="flex items-center gap-3">
-            <button onClick={toggleMute} className="text-neutral-400 hover:text-white transition">
+            <button onClick={toggleMute} className="text-neutral-400 hover:text-white transition shrink-0">
               {muted || volume === 0 ? <VolumeX size={18} /> : <Volume2 size={18} />}
             </button>
             <input
@@ -299,12 +308,11 @@ function RoomNowPlaying({ room, onClose }: { room: any; onClose: () => void }) {
           </div>
         </div>
 
-        <div className="flex-1 min-h-0 min-w-0">
+        <div className="flex-1 min-h-[60vh] md:min-h-0 min-w-0">
           <LyricsPanel
             trackId={track.id}
             progress={displayedProgress}
             onSeek={canControl ? commitSeek : undefined}
-            onClose={onClose}
           />
         </div>
       </div>

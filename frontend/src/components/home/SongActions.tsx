@@ -41,7 +41,7 @@ export default function SongActions({
           fill={track.isFavorite ? '#22c55e' : 'none'}
           className={`transition-colors ${
             track.isFavorite ? 'text-green-500' : 'text-neutral-500 hover:text-white'
-          } ${!track.isFavorite ? 'opacity-0 group-hover:opacity-100' : ''}`}
+          } ${!track.isFavorite ? 'opacity-100 md:opacity-0 md:group-hover:opacity-100' : ''}`}
         />
       </button>
 
@@ -50,7 +50,7 @@ export default function SongActions({
           e.stopPropagation();
           isOpen ? onClose() : onOpen();
         }}
-        className="opacity-0 group-hover:opacity-100 transition-opacity text-neutral-500 hover:text-white"
+        className="opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity text-neutral-500 hover:text-white"
       >
         <MoreHorizontal size={17} />
       </button>
