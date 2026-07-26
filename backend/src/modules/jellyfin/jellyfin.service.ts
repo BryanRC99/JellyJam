@@ -1,6 +1,37 @@
 import { env } from '../../config/env';
 import { JellyfinAuthResult } from './jellyfin.types';
 
+export class JellyfinError extends Error {
+  status: number;
+  constructor(status: number, message: string) {
+    super(message);
+    this.status = status;
+    this.name = 'JellyfinError';
+  }
+}
+
+// Único punto de la app que sabe qué status HTTP devolvió Jellyfin.
+// Todas las llamadas autenticadas a Jellyfin deben pasar por aquí para que
+// un 401 (token de Jellyfin inválido/expirado) se pueda distinguir de
+// cualquier otro error (Jellyfin caído, 5xx, etc.) más arriba en los controllers.
+async function jellyfinFetch(url: string, token: string, init: RequestInit = {}): Promise<Response> {
+  const res = await fetch(url, {
+    ...init,
+    headers: { ...(init.headers ?? {}), 'X-Emby-Token': token },
+  });
+
+  if (!res.ok) {
+    throw new JellyfinError(
+      res.status,
+      res.status === 401
+        ? 'Token de Jellyfin inválido o expirado'
+        : `Jellyfin respondió ${res.status}`
+    );
+  }
+
+  return res;
+}
+
 function buildDeviceId(username: string) {
   return Buffer.from(`${env.clientName}-${username}`).toString('base64');
 }
@@ -14,6 +45,8 @@ function authHeader(username: string) {
   ].join(', ');
 }
 
+// El login inicial no pasa por jellyfinFetch porque todavía no hay token de sesión:
+// aquí se distingue el 401 (credenciales incorrectas) manualmente.
 export async function authenticateByName(
   username: string,
   password: string
@@ -43,11 +76,7 @@ export async function getAudioItems(userId: string, token: string) {
     Fields: 'Artists,Album,RunTimeTicks,UserData',
   });
 
-  const res = await fetch(`${env.jellyfinServerUrl}/Users/${userId}/Items?${params}`, {
-    headers: { 'X-Emby-Token': token },
-  });
-
-  if (!res.ok) throw new Error(`Error al obtener biblioteca (${res.status})`);
+  const res = await jellyfinFetch(`${env.jellyfinServerUrl}/Users/${userId}/Items?${params}`, token);
   const data = await res.json();
   return data.Items ?? [];
 }
@@ -69,36 +98,21 @@ export async function getFavoriteAudioItems(userId: string, token: string) {
     Filters: 'IsFavorite',
   });
 
-  const res = await fetch(
-    `${env.jellyfinServerUrl}/Users/${userId}/Items?${params}`,
-    {
-      headers: {
-        'X-Emby-Token': token,
-      },
-    }
-  );
-
-  if (!res.ok) {
-    throw new Error(`Error al obtener favoritos (${res.status})`);
-  }
-
+  const res = await jellyfinFetch(`${env.jellyfinServerUrl}/Users/${userId}/Items?${params}`, token);
   const data = await res.json();
   return data.Items ?? [];
 }
 
-// NUEVO: marca/desmarca favorito directamente en Jellyfin
+// Marca/desmarca favorito directamente en Jellyfin
 export async function setFavorite(
   userId: string,
   token: string,
   itemId: string,
   favorite: boolean
 ) {
-  const res = await fetch(`${env.jellyfinServerUrl}/Users/${userId}/FavoriteItems/${itemId}`, {
+  await jellyfinFetch(`${env.jellyfinServerUrl}/Users/${userId}/FavoriteItems/${itemId}`, token, {
     method: favorite ? 'POST' : 'DELETE',
-    headers: { 'X-Emby-Token': token },
   });
-
-  if (!res.ok) throw new Error(`Error al actualizar favorito (${res.status})`);
 }
 
 export async function getAlbums(userId: string, token: string) {
@@ -109,21 +123,13 @@ export async function getAlbums(userId: string, token: string) {
     Fields: 'AlbumArtist,ChildCount,ProductionYear',
   });
 
-  const res = await fetch(`${env.jellyfinServerUrl}/Users/${userId}/Items?${params}`, {
-    headers: { 'X-Emby-Token': token },
-  });
-
-  if (!res.ok) throw new Error(`Error al obtener álbumes (${res.status})`);
+  const res = await jellyfinFetch(`${env.jellyfinServerUrl}/Users/${userId}/Items?${params}`, token);
   const data = await res.json();
   return data.Items ?? [];
 }
 
 export async function getAlbumById(userId: string, token: string, albumId: string) {
-  const res = await fetch(`${env.jellyfinServerUrl}/Users/${userId}/Items/${albumId}`, {
-    headers: { 'X-Emby-Token': token },
-  });
-
-  if (!res.ok) throw new Error(`Error al obtener el álbum (${res.status})`);
+  const res = await jellyfinFetch(`${env.jellyfinServerUrl}/Users/${userId}/Items/${albumId}`, token);
   return res.json();
 }
 
@@ -135,11 +141,7 @@ export async function getAlbumTracks(userId: string, token: string, albumId: str
     Fields: 'Artists,Album,RunTimeTicks,UserData,IndexNumber',
   });
 
-  const res = await fetch(`${env.jellyfinServerUrl}/Users/${userId}/Items?${params}`, {
-    headers: { 'X-Emby-Token': token },
-  });
-
-  if (!res.ok) throw new Error(`Error al obtener canciones del álbum (${res.status})`);
+  const res = await jellyfinFetch(`${env.jellyfinServerUrl}/Users/${userId}/Items?${params}`, token);
   const data = await res.json();
   return data.Items ?? [];
 }
@@ -150,21 +152,13 @@ export async function getArtists(userId: string, token: string) {
     SortBy: 'SortName',
   });
 
-  const res = await fetch(`${env.jellyfinServerUrl}/Artists?${params}`, {
-    headers: { 'X-Emby-Token': token },
-  });
-
-  if (!res.ok) throw new Error(`Error al obtener artistas (${res.status})`);
+  const res = await jellyfinFetch(`${env.jellyfinServerUrl}/Artists?${params}`, token);
   const data = await res.json();
   return data.Items ?? [];
 }
 
 export async function getArtistById(userId: string, token: string, artistId: string) {
-  const res = await fetch(`${env.jellyfinServerUrl}/Users/${userId}/Items/${artistId}`, {
-    headers: { 'X-Emby-Token': token },
-  });
-
-  if (!res.ok) throw new Error(`Error al obtener el artista (${res.status})`);
+  const res = await jellyfinFetch(`${env.jellyfinServerUrl}/Users/${userId}/Items/${artistId}`, token);
   return res.json();
 }
 
@@ -177,11 +171,7 @@ export async function getArtistAlbums(userId: string, token: string, artistId: s
     Fields: 'AlbumArtist,ChildCount,ProductionYear',
   });
 
-  const res = await fetch(`${env.jellyfinServerUrl}/Users/${userId}/Items?${params}`, {
-    headers: { 'X-Emby-Token': token },
-  });
-
-  if (!res.ok) throw new Error(`Error al obtener álbumes del artista (${res.status})`);
+  const res = await jellyfinFetch(`${env.jellyfinServerUrl}/Users/${userId}/Items?${params}`, token);
   const data = await res.json();
   return data.Items ?? [];
 }
@@ -195,11 +185,7 @@ export async function getArtistTracks(userId: string, token: string, artistId: s
     Fields: 'Artists,Album,RunTimeTicks,UserData',
   });
 
-  const res = await fetch(`${env.jellyfinServerUrl}/Users/${userId}/Items?${params}`, {
-    headers: { 'X-Emby-Token': token },
-  });
-
-  if (!res.ok) throw new Error(`Error al obtener canciones del artista (${res.status})`);
+  const res = await jellyfinFetch(`${env.jellyfinServerUrl}/Users/${userId}/Items?${params}`, token);
   const data = await res.json();
   return data.Items ?? [];
 }
@@ -211,21 +197,13 @@ export async function getUserPlaylists(userId: string, token: string) {
     SortBy: 'SortName',
   });
 
-  const res = await fetch(`${env.jellyfinServerUrl}/Users/${userId}/Items?${params}`, {
-    headers: { 'X-Emby-Token': token },
-  });
-
-  if (!res.ok) throw new Error(`Error al obtener playlists (${res.status})`);
+  const res = await jellyfinFetch(`${env.jellyfinServerUrl}/Users/${userId}/Items?${params}`, token);
   const data = await res.json();
   return data.Items ?? [];
 }
 
 export async function getPlaylistById(userId: string, token: string, playlistId: string) {
-  const res = await fetch(`${env.jellyfinServerUrl}/Users/${userId}/Items/${playlistId}`, {
-    headers: { 'X-Emby-Token': token },
-  });
-
-  if (!res.ok) throw new Error(`Error al obtener la playlist (${res.status})`);
+  const res = await jellyfinFetch(`${env.jellyfinServerUrl}/Users/${userId}/Items/${playlistId}`, token);
   return res.json();
 }
 
@@ -235,11 +213,7 @@ export async function getPlaylistTracks(userId: string, token: string, playlistI
     Fields: 'Artists,Album,RunTimeTicks,UserData',
   });
 
-  const res = await fetch(`${env.jellyfinServerUrl}/Playlists/${playlistId}/Items?${params}`, {
-    headers: { 'X-Emby-Token': token },
-  });
-
-  if (!res.ok) throw new Error(`Error al obtener canciones de la playlist (${res.status})`);
+  const res = await jellyfinFetch(`${env.jellyfinServerUrl}/Playlists/${playlistId}/Items?${params}`, token);
   const data = await res.json();
   return data.Items ?? [];
 }
@@ -253,13 +227,12 @@ export async function createPlaylist(
   const body: Record<string, unknown> = { Name: name, UserId: userId, MediaType: 'Audio' };
   if (firstItemId) body.Ids = [firstItemId];
 
-  const res = await fetch(`${env.jellyfinServerUrl}/Playlists`, {
+  const res = await jellyfinFetch(`${env.jellyfinServerUrl}/Playlists`, token, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'X-Emby-Token': token },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   });
 
-  if (!res.ok) throw new Error(`Error al crear la playlist (${res.status})`);
   return res.json(); // { Id: '...' }
 }
 
@@ -270,27 +243,21 @@ export async function addItemToPlaylist(
   itemId: string
 ) {
   const params = new URLSearchParams({ Ids: itemId, UserId: userId });
-  const res = await fetch(`${env.jellyfinServerUrl}/Playlists/${playlistId}/Items?${params}`, {
+  await jellyfinFetch(`${env.jellyfinServerUrl}/Playlists/${playlistId}/Items?${params}`, token, {
     method: 'POST',
-    headers: { 'X-Emby-Token': token },
   });
-
-  if (!res.ok) throw new Error(`Error al agregar la canción a la playlist (${res.status})`);
 }
 
 export async function removeItemFromPlaylist(
   token: string,
-  userId: string, 
+  userId: string,
   playlistId: string,
   entryId: string
 ) {
   const params = new URLSearchParams({ EntryIds: entryId, UserId: userId });
-  const res = await fetch(`${env.jellyfinServerUrl}/Playlists/${playlistId}/Items?${params}`, {
+  await jellyfinFetch(`${env.jellyfinServerUrl}/Playlists/${playlistId}/Items?${params}`, token, {
     method: 'DELETE',
-    headers: { 'X-Emby-Token': token },
   });
-
-  if (!res.ok) throw new Error(`Error al quitar la canción de la playlist (${res.status})`);
 }
 
 export async function getAudioItemById(userId: string, token: string, itemId: string) {
@@ -298,10 +265,6 @@ export async function getAudioItemById(userId: string, token: string, itemId: st
     Fields: 'Artists,Album,RunTimeTicks',
   });
 
-  const res = await fetch(`${env.jellyfinServerUrl}/Users/${userId}/Items/${itemId}?${params}`, {
-    headers: { 'X-Emby-Token': token },
-  });
-
-  if (!res.ok) throw new Error(`Error al obtener la canción (${res.status})`);
+  const res = await jellyfinFetch(`${env.jellyfinServerUrl}/Users/${userId}/Items/${itemId}?${params}`, token);
   return res.json();
 }

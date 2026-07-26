@@ -43,5 +43,8 @@ export function setGuestControlController(req: Request, res: Response) {
   const room = setGuestControl(roomId, session.jellyfinUserId, Boolean(allowGuestControl));
   if (!room) return res.status(403).json({ error: 'Solo el host puede cambiar este permiso' });
 
+  const io = req.app.get('io');
+  io.to(room.id).emit('room:state', room);
+
   res.json(room);
 }

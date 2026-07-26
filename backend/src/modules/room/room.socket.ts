@@ -1,6 +1,7 @@
 import { Server, Socket } from 'socket.io';
-import { joinRoom, leaveRoom, addToQueue, setPlaybackState, transferHost, kickMember } from './room.store';
+import { joinRoom, leaveRoom, addToQueue, setPlaybackState, transferHost, kickMember, reorderQueue, removeFromQueue } from './room.store';
 import type { SessionPayload } from '../auth/auth.types';
+
 
 function session(socket: Socket): SessionPayload {
   return socket.data.session as SessionPayload;
@@ -51,6 +52,20 @@ export function registerRoomSocket(io: Server) {
       const roomId = socket.data.roomId as string | undefined;
       if (!roomId) return;
       const room = transferHost(roomId, jellyfinUserId, targetUserId);
+      if (room) io.to(room.id).emit('room:state', room);
+    });
+
+    socket.on('room:queue-reorder', ({ fromIndex, toIndex }: { fromIndex: number; toIndex: number }) => {
+      const roomId = socket.data.roomId as string | undefined;
+      if (!roomId) return;
+      const room = reorderQueue(roomId, fromIndex, toIndex);
+      if (room) io.to(room.id).emit('room:state', room);
+    });
+
+    socket.on('room:queue-remove', ({ index }: { index: number }) => {
+      const roomId = socket.data.roomId as string | undefined;
+      if (!roomId) return;
+      const room = removeFromQueue(roomId, index);
       if (room) io.to(room.id).emit('room:state', room);
     });
 

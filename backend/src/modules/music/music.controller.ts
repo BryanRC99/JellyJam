@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { JellyfinError } from '../jellyfin/jellyfin.service';
 import {
   getAudioItems,
   getFavoriteAudioItems,
@@ -19,6 +20,14 @@ import {
   setFavorite,
 } from '../jellyfin/jellyfin.service';
 import { env } from '../../config/env';
+
+function handleJellyfinError(err: any, res: Response, fallback: string) {
+  console.error(fallback, err);
+  if (err instanceof JellyfinError && err.status === 401) {
+    return res.status(401).json({ error: 'Sesión de Jellyfin expirada' });
+  }
+  return res.status(502).json({ error: err.message ?? fallback });
+}
 
 function mapTrack(item: any, sessionToken: string, jellyfinToken: string) {
   return {
@@ -44,7 +53,7 @@ export async function listTracksController(req: Request, res: Response) {
     const items = await getAudioItems(session.jellyfinUserId, session.jellyfinToken);
     res.json({ tracks: items.map((item: any) => mapTrack(item, sessionToken, session.jellyfinToken)) });
   } catch (err: any) {
-    res.status(502).json({ error: err.message ?? 'Error al obtener canciones' });
+    handleJellyfinError(err, res, 'Error al obtener canciones');
   }
 }
 
@@ -55,7 +64,7 @@ export async function listFavoriteTracksController(req: Request, res: Response) 
     const items = await getFavoriteAudioItems(session.jellyfinUserId, session.jellyfinToken);
     res.json({ tracks: items.map((item: any) => mapTrack(item, sessionToken, session.jellyfinToken)) });
   } catch (err: any) {
-    res.status(502).json({ error: err.message ?? 'Error al obtener favoritos' });
+    handleJellyfinError(err, res, 'Error al obtener favoritos');
   }
 }
 
@@ -66,7 +75,7 @@ export async function addFavoriteController(req: Request, res: Response) {
     await setFavorite(session.jellyfinUserId, session.jellyfinToken, itemId, true);
     res.json({ isFavorite: true });
   } catch (err: any) {
-    res.status(502).json({ error: err.message ?? 'No se pudo marcar como favorito' });
+    handleJellyfinError(err, res, 'No se pudo marcar como favorito');
   }
 }
 
@@ -77,7 +86,7 @@ export async function removeFavoriteController(req: Request, res: Response) {
     await setFavorite(session.jellyfinUserId, session.jellyfinToken, itemId, false);
     res.json({ isFavorite: false });
   } catch (err: any) {
-    res.status(502).json({ error: err.message ?? 'No se pudo quitar de favoritos' });
+    handleJellyfinError(err, res, 'No se pudo quitar de favoritos');
   }
 }
 
@@ -95,7 +104,7 @@ export async function listAlbumsController(req: Request, res: Response) {
     }));
     res.json({ albums });
   } catch (err: any) {
-    res.status(502).json({ error: err.message ?? 'Error al obtener álbumes' });
+    handleJellyfinError(err, res, 'Error al obtener álbumes');
   }
 }
 
@@ -124,7 +133,7 @@ export async function getAlbumController(req: Request, res: Response) {
       tracks,
     });
   } catch (err: any) {
-    res.status(502).json({ error: err.message ?? 'Error al obtener el álbum' });
+    handleJellyfinError(err, res, 'Error al obtener el álbum');
   }
 }
 
@@ -139,7 +148,7 @@ export async function listArtistsController(req: Request, res: Response) {
     }));
     res.json({ artists });
   } catch (err: any) {
-    res.status(502).json({ error: err.message ?? 'Error al obtener artistas' });
+    handleJellyfinError(err, res, 'Error al obtener artistas');
   }
 }
 
@@ -174,7 +183,7 @@ export async function getArtistController(req: Request, res: Response) {
       tracks,
     });
   } catch (err: any) {
-    res.status(502).json({ error: err.message ?? 'Error al obtener el artista' });
+    handleJellyfinError(err, res, 'Error al obtener el artista');
   }
 }
 
@@ -190,7 +199,7 @@ export async function listPlaylistsController(req: Request, res: Response) {
     }));
     res.json({ playlists });
   } catch (err: any) {
-    res.status(502).json({ error: err.message ?? 'Error al obtener playlists' });
+    handleJellyfinError(err, res, 'Error al obtener playlists');
   }
 }
 
@@ -217,7 +226,7 @@ export async function getPlaylistController(req: Request, res: Response) {
       tracks,
     });
   } catch (err: any) {
-    res.status(502).json({ error: err.message ?? 'Error al obtener la playlist' });
+    handleJellyfinError(err, res, 'Error al obtener la playlist');
   }
 }
 
@@ -233,7 +242,7 @@ export async function createPlaylistController(req: Request, res: Response) {
     const result = await createPlaylist(session.jellyfinUserId, session.jellyfinToken, name.trim(), itemId);
     res.json({ id: result.Id, name: name.trim() });
   } catch (err: any) {
-    res.status(502).json({ error: err.message ?? 'No se pudo crear la playlist' });
+    handleJellyfinError(err, res, 'No se pudo crear la playlist');
   }
 }
 
@@ -245,7 +254,7 @@ export async function addTrackToPlaylistController(req: Request, res: Response) 
     await addItemToPlaylist(session.jellyfinToken, session.jellyfinUserId, playlistId, itemId);
     res.json({ ok: true });
   } catch (err: any) {
-    res.status(502).json({ error: err.message ?? 'No se pudo agregar la canción' });
+    handleJellyfinError(err, res, 'No se pudo agregar la canción');
   }
 }
 
@@ -257,6 +266,6 @@ export async function removeTrackFromPlaylistController(req: Request, res: Respo
     await removeItemFromPlaylist(session.jellyfinToken, session.jellyfinUserId, playlistId, entryId);
     res.json({ ok: true });
   } catch (err: any) {
-    res.status(502).json({ error: err.message ?? 'No se pudo quitar la canción' });
+    handleJellyfinError(err, res, 'No se pudo quitar la canción');
   }
 }

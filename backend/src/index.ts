@@ -32,6 +32,8 @@ const io = new Server(httpServer, {
   cors: { origin: ALLOWED_ORIGIN },
 });
 
+app.set('io', io);
+
 io.use((socket, next) => {
   const token = socket.handshake.auth?.token as string | undefined;
   if (!token) return next(new Error('No autenticado'));

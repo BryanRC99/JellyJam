@@ -30,6 +30,8 @@ interface RoomStore {
   seek: (positionSeconds: number) => void;
   transferHost: (targetUserId: string) => void;
   kickMember: (targetUserId: string) => void;
+  reorderQueue: (fromIndex: number, toIndex: number) => void;
+removeFromQueue: (index: number) => void;
   leaveRoom: () => void;
   clearKicked: () => void;
 }
@@ -55,6 +57,8 @@ export const useRoomStore = create<RoomStore>((set) => {
     seek: (positionSeconds) => socket.emit('room:playback', { basePosition: positionSeconds }),
     transferHost: (targetUserId) => socket.emit('room:transfer-host', { targetUserId }),
     kickMember: (targetUserId) => socket.emit('room:kick', { targetUserId }),
+    reorderQueue: (fromIndex, toIndex) => socket.emit('room:queue-reorder', { fromIndex, toIndex }),
+removeFromQueue: (index) => socket.emit('room:queue-remove', { index }),
     leaveRoom: () => {
       socket.disconnect();
       set({ room: null });

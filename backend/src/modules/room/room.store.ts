@@ -134,3 +134,47 @@ export function kickMember(
 
   return { room, kickedSocketId };
 }
+
+export function reorderQueue(roomId: string, fromIndex: number, toIndex: number): RoomState | undefined {
+  const room = rooms.get(roomId);
+  if (!room) return undefined;
+  if (fromIndex < 0 || fromIndex >= room.queue.length) return undefined;
+  if (toIndex < 0 || toIndex >= room.queue.length) return undefined;
+  if (fromIndex === toIndex) return room;
+
+  const [moved] = room.queue.splice(fromIndex, 1);
+  room.queue.splice(toIndex, 0, moved);
+
+  // Mantenemos currentIndex apuntando a la misma canción que estaba sonando,
+  // aunque su posición en la cola haya cambiado.
+  if (room.currentIndex === fromIndex) {
+    room.currentIndex = toIndex;
+  } else if (fromIndex < room.currentIndex && toIndex >= room.currentIndex) {
+    room.currentIndex -= 1;
+  } else if (fromIndex > room.currentIndex && toIndex <= room.currentIndex) {
+    room.currentIndex += 1;
+  }
+
+  return room;
+}
+
+export function removeFromQueue(roomId: string, index: number): RoomState | undefined {
+  const room = rooms.get(roomId);
+  if (!room) return undefined;
+  if (index < 0 || index >= room.queue.length) return undefined;
+
+  room.queue.splice(index, 1);
+
+  if (room.queue.length === 0) {
+    room.currentIndex = -1;
+    room.isPlaying = false;
+    room.startedAt = null;
+    room.basePosition = 0;
+  } else if (index < room.currentIndex) {
+    room.currentIndex -= 1;
+  } else if (index === room.currentIndex && room.currentIndex >= room.queue.length) {
+    room.currentIndex = room.queue.length - 1;
+  }
+
+  return room;
+}

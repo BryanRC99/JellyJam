@@ -13,6 +13,8 @@ import { useNavigate } from 'react-router-dom';
 import SidebarItem from './SidebarItem';
 import { apiFetch } from '../../lib/api';
 import { useRoomStore } from '../../store/roomStore';
+import { LogOut } from 'lucide-react';
+import { useAuthStore } from '../../store/authStore';
 
 interface SidebarProps {
   open: boolean;
@@ -20,6 +22,18 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ open, onClose }: SidebarProps) {
+
+  const user = useAuthStore((s) => s.user);
+  const logout = useAuthStore((s) => s.logout);
+  const room = useRoomStore((s) => s.room);
+  const leaveRoom = useRoomStore((s) => s.leaveRoom);
+
+  function handleLogout() {
+    if (room) leaveRoom(); // desconecta el socket si estaba en una sala
+    logout();
+    navigate('/login');
+    onClose();
+  }
   const navigate = useNavigate();
   const joinRoom = useRoomStore((s) => s.joinRoom);
 
@@ -52,9 +66,8 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
     <>
       {/* Backdrop — solo visible en mobile cuando el drawer está abierto */}
       <div
-        className={`fixed inset-0 z-40 bg-black/60 transition-opacity duration-300 md:hidden ${
-          open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-        }`}
+        className={`fixed inset-0 z-40 bg-black/60 transition-opacity duration-300 md:hidden ${open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+          }`}
         onClick={onClose}
         aria-hidden="true"
       />
@@ -106,11 +119,19 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
           </div>
         </div>
 
-        <div className="shrink-0 p-3 lg:p-4 border-t border-neutral-900">
+        <div className="shrink-0 p-3 lg:p-4 border-t border-neutral-900 space-y-2">
           <div className="rounded-lg bg-neutral-900 px-3 py-2.5">
-            <p className="text-sm font-semibold">JellyJam</p>
+            <p className="text-sm font-semibold truncate">{user?.name ?? 'JellyJam'}</p>
             <p className="text-[11px] text-neutral-500 mt-0.5">Versión 0.1.0</p>
           </div>
+
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 rounded-lg px-3 py-2 text-red-400 hover:bg-red-500/10 transition text-sm font-medium"
+          >
+            <LogOut size={18} className="shrink-0" />
+            Cerrar sesión
+          </button>
         </div>
       </aside>
     </>

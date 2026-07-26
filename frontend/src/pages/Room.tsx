@@ -97,15 +97,10 @@ export default function Room() {
           </div>
           <button
             onClick={handleToggleGuestControl}
-            className={`w-11 h-6 rounded-full transition-colors relative flex-shrink-0 ${
-              room.allowGuestControl ? 'bg-green-500' : 'bg-neutral-700'
-            }`}
-          >
-            <span
-              className={`absolute top-0.5 w-5 h-5 bg-white rounded-full transition-transform ${
-                room.allowGuestControl ? 'translate-x-5' : 'translate-x-0.5'
+            className={`w-11 h-6 rounded-full transition-colors flex items-center px-0.5 flex-shrink-0 ${room.allowGuestControl ? 'bg-green-500 justify-end' : 'bg-neutral-700 justify-start'
               }`}
-            />
+          >
+            <span className="w-5 h-5 bg-white rounded-full transition-transform" />
           </button>
         </div>
       )}

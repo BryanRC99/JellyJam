@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { getAudioItemById } from '../jellyfin/jellyfin.service';
+import { getAudioItemById, JellyfinError } from '../jellyfin/jellyfin.service';
 import { getLyricsForTrack } from './lyrics.service';
 
 export async function getLyricsController(req: Request, res: Response) {
@@ -19,6 +19,12 @@ export async function getLyricsController(req: Request, res: Response) {
     const lyrics = await getLyricsForTrack(itemId, meta);
     res.json(lyrics);
   } catch (err: any) {
+    console.error('No se pudieron obtener las letras', err);
+
+    if (err instanceof JellyfinError && err.status === 401) {
+      return res.status(401).json({ error: 'Sesión de Jellyfin expirada' });
+    }
+
     res.status(502).json({ error: err.message ?? 'No se pudieron obtener las letras' });
   }
 }

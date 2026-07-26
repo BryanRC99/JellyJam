@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { SyntheticEvent } from 'react';
 import {
   Play, Pause, SkipBack, SkipForward, Loader2,
-  Shuffle, Repeat, Repeat1, Volume2, VolumeX, Users, LogOut, Copy, ListMusic, Maximize2, Mic2
+  Shuffle, Repeat, Repeat1, Volume2, VolumeX, Users, LogOut, Copy, ListMusic, Maximize2, Mic2, ChevronUp, ChevronDown, X
 } from 'lucide-react';
 import { usePlayerStore, useCurrentTrack, useUpcomingTracks } from '../store/playerStore';
 import type { Track as LibraryTrack } from '../types/track';
@@ -74,7 +74,7 @@ function RoomPlayer({ room, setPlayback, seek, transferHost, kickMember, leaveRo
   const [showMembers, setShowMembers] = useState(false);
   const [showQueue, setShowQueue] = useState(false);
   const [showLyrics, setShowLyrics] = useState(false);
-  
+
   const membersMenuRef = useRef<HTMLDivElement>(null);
   const queueMenuRef = useRef<HTMLDivElement>(null);
   const lyricsMenuRef = useRef<HTMLDivElement>(null);
@@ -84,6 +84,8 @@ function RoomPlayer({ room, setPlayback, seek, transferHost, kickMember, leaveRo
   const setVolume = usePlayerStore((s) => s.setVolume);
   const toggleMute = usePlayerStore((s) => s.toggleMute);
   const openNowPlaying = useUiStore((s) => s.openNowPlaying);
+  const roomReorderQueue = useRoomStore((s) => s.reorderQueue);
+  const roomRemoveFromQueue = useRoomStore((s) => s.removeFromQueue);
 
   const canControl = room.hostUserId === userId || room.allowGuestControl;
   const currentTrackId = room.currentIndex >= 0 ? room.queue[room.currentIndex] : null;
@@ -369,7 +371,7 @@ function RoomPlayer({ room, setPlayback, seek, transferHost, kickMember, leaveRo
                     {queueTracks.map((queuedTrack, index: number) => (
                       <div
                         key={`${room.queue[index]}-${index}`}
-                        className={`flex min-w-0 items-center gap-3 rounded-lg px-2 py-2 text-sm ${index === room.currentIndex ? 'bg-green-500/10 text-white' : 'text-neutral-300'}`}
+                        className={`group flex min-w-0 items-center gap-2 rounded-lg px-2 py-2 text-sm ${index === room.currentIndex ? 'bg-green-500/10 text-white' : 'text-neutral-300'}`}
                       >
                         <span className="w-5 shrink-0 text-xs text-neutral-500 tabular-nums">{index + 1}</span>
                         {queuedTrack?.coverUrl ? (
@@ -381,8 +383,35 @@ function RoomPlayer({ room, setPlayback, seek, transferHost, kickMember, leaveRo
                           <p className="truncate font-medium">{queuedTrack?.title ?? 'Canción no cargada'}</p>
                           <p className="truncate text-xs text-neutral-500">{queuedTrack?.artist ?? 'Sin detalles'}</p>
                         </div>
-                        {index === room.currentIndex && (
+
+                        {index === room.currentIndex ? (
                           <span className="shrink-0 text-[11px] font-semibold text-green-500">Ahora</span>
+                        ) : (
+                          <div className="flex items-center gap-0.5 shrink-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition">
+                            <button
+                              onClick={() => roomReorderQueue(index, index - 1)}
+                              disabled={index === 0}
+                              className="text-neutral-500 hover:text-white disabled:opacity-20 disabled:pointer-events-none p-1"
+                              title="Mover arriba"
+                            >
+                              <ChevronUp size={14} />
+                            </button>
+                            <button
+                              onClick={() => roomReorderQueue(index, index + 1)}
+                              disabled={index === queueTracks.length - 1}
+                              className="text-neutral-500 hover:text-white disabled:opacity-20 disabled:pointer-events-none p-1"
+                              title="Mover abajo"
+                            >
+                              <ChevronDown size={14} />
+                            </button>
+                            <button
+                              onClick={() => roomRemoveFromQueue(index)}
+                              className="text-neutral-500 hover:text-red-400 p-1"
+                              title="Quitar de la cola"
+                            >
+                              <X size={14} />
+                            </button>
+                          </div>
                         )}
                       </div>
                     ))}
