@@ -9,6 +9,9 @@ export const env = {
   jwtExpiresIn: process.env.JWT_EXPIRES_IN ?? '7d',
   clientName: process.env.CLIENT_NAME ?? 'JellyfinJam',
   clientVersion: process.env.CLIENT_VERSION ?? '0.1.0',
+
+  warmCacheUsername: process.env.WARM_CACHE_USERNAME,
+  warmCachePassword: process.env.WARM_CACHE_PASSWORD,
 };
 
 if (!env.jellyfinServerUrl) {

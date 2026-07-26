@@ -14,11 +14,13 @@ import {
   createPlaylistController,
   addTrackToPlaylistController,
   removeTrackFromPlaylistController,
+  imageProxyController,
 } from './music.controller';
 import { streamController } from './stream.controller';
 import { getLyricsController } from '../lyrics/lyrics.controller';
 
 export const musicRouter = Router();
+musicRouter.get('/image/:itemId', requireAuth, imageProxyController);
 musicRouter.get('/tracks', requireAuth, listTracksController);
 musicRouter.get('/stream/:itemId', requireAuth, streamController);
 musicRouter.get('/favorites', requireAuth, listFavoriteTracksController);
