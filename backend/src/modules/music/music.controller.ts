@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
-import { JellyfinError } from '../jellyfin/jellyfin.service';
+import { Readable } from 'node:stream';
 import {
+  JellyfinError,
   getAudioItems,
   getFavoriteAudioItems,
   getAlbums,
@@ -29,7 +30,9 @@ function handleJellyfinError(err: any, res: Response, fallback: string) {
   return res.status(502).json({ error: err.message ?? fallback });
 }
 
-function mapTrack(item: any, sessionToken: string, jellyfinToken: string) {
+// coverUrl pasa a través del proxy de imágenes propio (`imageProxyController`)
+// usando el sessionToken de nuestra app en lugar de exponer el jellyfinToken.
+function mapTrack(item: any, sessionToken: string) {
   return {
     id: item.Id,
     title: item.Name,
@@ -37,13 +40,13 @@ function mapTrack(item: any, sessionToken: string, jellyfinToken: string) {
     album: item.Album ?? '',
     durationSeconds: item.RunTimeTicks ? Math.round(item.RunTimeTicks / 10_000_000) : 0,
     streamUrl: `${env.publicApiUrl}/music/stream/${item.Id}?token=${sessionToken}`,
-    coverUrl: buildImageUrl(item.Id, jellyfinToken),
+    coverUrl: buildImageUrl(item.Id, sessionToken),
     isFavorite: item.UserData?.IsFavorite ?? false,
   };
 }
 
-function imageUrlOrNull(item: any, jellyfinToken: string): string | null {
-  return item.ImageTags?.Primary ? buildImageUrl(item.Id, jellyfinToken) : null;
+function imageUrlOrNull(item: any, sessionToken: string): string | null {
+  return item.ImageTags?.Primary ? buildImageUrl(item.Id, sessionToken) : null;
 }
 
 export async function listTracksController(req: Request, res: Response) {
@@ -51,7 +54,7 @@ export async function listTracksController(req: Request, res: Response) {
   const sessionToken = req.rawToken!;
   try {
     const items = await getAudioItems(session.jellyfinUserId, session.jellyfinToken);
-    res.json({ tracks: items.map((item: any) => mapTrack(item, sessionToken, session.jellyfinToken)) });
+    res.json({ tracks: items.map((item: any) => mapTrack(item, sessionToken)) });
   } catch (err: any) {
     handleJellyfinError(err, res, 'Error al obtener canciones');
   }
@@ -62,7 +65,7 @@ export async function listFavoriteTracksController(req: Request, res: Response) 
   const sessionToken = req.rawToken!;
   try {
     const items = await getFavoriteAudioItems(session.jellyfinUserId, session.jellyfinToken);
-    res.json({ tracks: items.map((item: any) => mapTrack(item, sessionToken, session.jellyfinToken)) });
+    res.json({ tracks: items.map((item: any) => mapTrack(item, sessionToken)) });
   } catch (err: any) {
     handleJellyfinError(err, res, 'Error al obtener favoritos');
   }
@@ -92,6 +95,7 @@ export async function removeFavoriteController(req: Request, res: Response) {
 
 export async function listAlbumsController(req: Request, res: Response) {
   const session = req.session!;
+  const sessionToken = req.rawToken!;
   try {
     const items = await getAlbums(session.jellyfinUserId, session.jellyfinToken);
     const albums = items.map((item: any) => ({
@@ -100,7 +104,7 @@ export async function listAlbumsController(req: Request, res: Response) {
       artist: item.AlbumArtist ?? 'Varios artistas',
       year: item.ProductionYear ?? null,
       trackCount: item.ChildCount ?? 0,
-      coverUrl: imageUrlOrNull(item, session.jellyfinToken),
+      coverUrl: imageUrlOrNull(item, sessionToken),
     }));
     res.json({ albums });
   } catch (err: any) {
@@ -120,7 +124,7 @@ export async function getAlbumController(req: Request, res: Response) {
     ]);
 
     const tracks = items.map((item: any) => ({
-      ...mapTrack(item, sessionToken, session.jellyfinToken),
+      ...mapTrack(item, sessionToken),
       trackNumber: item.IndexNumber ?? null,
     }));
 
@@ -129,7 +133,7 @@ export async function getAlbumController(req: Request, res: Response) {
       name: albumInfo.Name,
       artist: albumInfo.AlbumArtist ?? 'Varios artistas',
       year: albumInfo.ProductionYear ?? null,
-      coverUrl: imageUrlOrNull(albumInfo, session.jellyfinToken),
+      coverUrl: imageUrlOrNull(albumInfo, sessionToken),
       tracks,
     });
   } catch (err: any) {
@@ -139,12 +143,13 @@ export async function getAlbumController(req: Request, res: Response) {
 
 export async function listArtistsController(req: Request, res: Response) {
   const session = req.session!;
+  const sessionToken = req.rawToken!;
   try {
     const items = await getArtists(session.jellyfinUserId, session.jellyfinToken);
     const artists = items.map((item: any) => ({
       id: item.Id,
       name: item.Name,
-      imageUrl: imageUrlOrNull(item, session.jellyfinToken),
+      imageUrl: imageUrlOrNull(item, sessionToken),
     }));
     res.json({ artists });
   } catch (err: any) {
@@ -170,15 +175,15 @@ export async function getArtistController(req: Request, res: Response) {
       artist: item.AlbumArtist ?? artistInfo.Name,
       year: item.ProductionYear ?? null,
       trackCount: item.ChildCount ?? 0,
-      coverUrl: imageUrlOrNull(item, session.jellyfinToken),
+      coverUrl: imageUrlOrNull(item, sessionToken),
     }));
 
-    const tracks = trackItems.map((item: any) => mapTrack(item, sessionToken, session.jellyfinToken));
+    const tracks = trackItems.map((item: any) => mapTrack(item, sessionToken));
 
     res.json({
       id: artistInfo.Id,
       name: artistInfo.Name,
-      imageUrl: imageUrlOrNull(artistInfo, session.jellyfinToken),
+      imageUrl: imageUrlOrNull(artistInfo, sessionToken),
       albums,
       tracks,
     });
@@ -189,13 +194,14 @@ export async function getArtistController(req: Request, res: Response) {
 
 export async function listPlaylistsController(req: Request, res: Response) {
   const session = req.session!;
+  const sessionToken = req.rawToken!;
   try {
     const items = await getUserPlaylists(session.jellyfinUserId, session.jellyfinToken);
     const playlists = items.map((item: any) => ({
       id: item.Id,
       name: item.Name,
       trackCount: item.ChildCount ?? 0,
-      coverUrl: imageUrlOrNull(item, session.jellyfinToken),
+      coverUrl: imageUrlOrNull(item, sessionToken),
     }));
     res.json({ playlists });
   } catch (err: any) {
@@ -215,14 +221,14 @@ export async function getPlaylistController(req: Request, res: Response) {
     ]);
 
     const tracks = items.map((item: any) => ({
-      ...mapTrack(item, sessionToken, session.jellyfinToken),
+      ...mapTrack(item, sessionToken),
       playlistItemId: item.PlaylistItemId,
     }));
 
     res.json({
       id: playlistInfo.Id,
       name: playlistInfo.Name,
-      coverUrl: imageUrlOrNull(playlistInfo, session.jellyfinToken),
+      coverUrl: imageUrlOrNull(playlistInfo, sessionToken),
       tracks,
     });
   } catch (err: any) {
@@ -267,5 +273,30 @@ export async function removeTrackFromPlaylistController(req: Request, res: Respo
     res.json({ ok: true });
   } catch (err: any) {
     handleJellyfinError(err, res, 'No se pudo quitar la canción');
+  }
+}
+
+// Proxy de imágenes: sirve las carátulas a través de la API pública
+// con headers de caché y sin exponer credenciales de Jellyfin.
+export async function imageProxyController(req: Request, res: Response) {
+  const session = req.session!;
+  const { itemId } = req.params as { itemId: string };
+
+  try {
+    const jellyfinRes = await fetch(
+      `${env.jellyfinServerUrl}/Items/${itemId}/Images/Primary?api_key=${session.jellyfinToken}`
+    );
+
+    if (!jellyfinRes.ok || !jellyfinRes.body) {
+      return res.status(jellyfinRes.status).end();
+    }
+
+    res.setHeader('Content-Type', jellyfinRes.headers.get('content-type') ?? 'image/jpeg');
+    res.setHeader('Cache-Control', 'public, max-age=86400');
+
+    const nodeStream = Readable.fromWeb(jellyfinRes.body as any);
+    nodeStream.pipe(res);
+  } catch (err: any) {
+    res.status(502).end();
   }
 }

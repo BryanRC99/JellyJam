@@ -10,10 +10,7 @@ export class JellyfinError extends Error {
   }
 }
 
-// Único punto de la app que sabe qué status HTTP devolvió Jellyfin.
-// Todas las llamadas autenticadas a Jellyfin deben pasar por aquí para que
-// un 401 (token de Jellyfin inválido/expirado) se pueda distinguir de
-// cualquier otro error (Jellyfin caído, 5xx, etc.) más arriba en los controllers.
+// Único punto de la app que maneja peticiones a Jellyfin con token
 async function jellyfinFetch(url: string, token: string, init: RequestInit = {}): Promise<Response> {
   const res = await fetch(url, {
     ...init,
@@ -45,8 +42,6 @@ function authHeader(username: string) {
   ].join(', ');
 }
 
-// El login inicial no pasa por jellyfinFetch porque todavía no hay token de sesión:
-// aquí se distingue el 401 (credenciales incorrectas) manualmente.
 export async function authenticateByName(
   username: string,
   password: string
@@ -85,8 +80,9 @@ export function buildStreamUrl(itemId: string, token: string) {
   return `${env.jellyfinServerUrl}/Audio/${itemId}/stream?static=true&api_key=${token}`;
 }
 
-export function buildImageUrl(itemId: string, token: string) {
-  return `${env.jellyfinServerUrl}/Items/${itemId}/Images/Primary?api_key=${token}`;
+// Mantener la URL que apunta al proxy local/público del backend para carátulas
+export function buildImageUrl(itemId: string, sessionToken: string) {
+  return `${env.publicApiUrl}/music/image/${itemId}?token=${sessionToken}`;
 }
 
 export async function getFavoriteAudioItems(userId: string, token: string) {
@@ -103,7 +99,6 @@ export async function getFavoriteAudioItems(userId: string, token: string) {
   return data.Items ?? [];
 }
 
-// Marca/desmarca favorito directamente en Jellyfin
 export async function setFavorite(
   userId: string,
   token: string,
@@ -233,7 +228,7 @@ export async function createPlaylist(
     body: JSON.stringify(body),
   });
 
-  return res.json(); // { Id: '...' }
+  return res.json();
 }
 
 export async function addItemToPlaylist(

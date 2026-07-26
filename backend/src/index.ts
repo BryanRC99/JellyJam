@@ -12,11 +12,25 @@ import { registerRoomSocket } from './modules/room/room.socket';
 
 const app = express();
 
-// Mientras el frontend siga corriendo local en tu PC durante desarrollo.
-// Cuando despliegues el frontend en su URL final, cambia esto a esa URL.
-const ALLOWED_ORIGIN = 'http://localhost:5173';
+// Orígenes permitidos para CORS (Desarrollo local + Producción Azure)
+const ALLOWED_ORIGINS = [
+  'http://localhost:5173',
+  'http://158.23.60.133',
+  'https://jellyjam-app.mexicocentral.cloudapp.azure.com',
+];
 
-app.use(cors({ origin: ALLOWED_ORIGIN }));
+const corsOptions: cors.CorsOptions = {
+  origin: (origin, callback) => {
+    if (!origin || ALLOWED_ORIGINS.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('No permitido por CORS'));
+    }
+  },
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.use('/api/music', musicRouter);
@@ -29,9 +43,10 @@ app.get('/api/me', requireAuth, (req, res) => {
 
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
-  cors: { origin: ALLOWED_ORIGIN },
+  cors: corsOptions,
 });
 
+// Guardar instancia de socket.io en Express para usar req.app.get('io') en endpoints
 app.set('io', io);
 
 io.use((socket, next) => {
