@@ -88,6 +88,22 @@ export function registerRoomSocket(io: Server) {
       io.to(room.id).emit('room:state', room);
     });
 
+    socket.on('room:reaction', ({ emoji }: { emoji: string }) => {
+      const roomId = socket.data.roomId as string | undefined;
+      if (!roomId) return;
+
+      // Whitelist simple para evitar que se emita cualquier string arbitrario
+      const ALLOWED_EMOJIS = ['❤️', '🔥', '🎉', '😂', '👏', '😮'];
+      if (!ALLOWED_EMOJIS.includes(emoji)) return;
+
+      io.to(roomId).emit('room:reaction', {
+        id: `${socket.id}-${Date.now()}`,
+        emoji,
+        userId: jellyfinUserId,
+        name: jellyfinUsername,
+      });
+    });
+
     socket.on('disconnect', () => {
       const roomId = socket.data.roomId as string | undefined;
       if (!roomId) return;

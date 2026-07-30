@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { useMemo } from 'react';
 import type { Track } from '../types/track';
 
@@ -47,77 +48,95 @@ interface PlayerState {
 
 }
 
-export const usePlayerStore = create<PlayerState>((set, get) => ({
-  queue: [],
-  currentIndex: -1,
-  order: [],
-  isPlaying: false,
-  shuffle: false,
-  repeatMode: 'off',
-  volume: 1,
-  muted: false,
+export const usePlayerStore = create<PlayerState>()(
+  persist(
+    (set, get) => ({
+      queue: [],
+      currentIndex: -1,
+      order: [],
+      isPlaying: false,
+      shuffle: false,
+      repeatMode: 'off',
+      volume: 1,
+      muted: false,
 
-  progress: 0,
-  setProgress: (seconds) => set({ progress: seconds }),
-  seekRequest: null,
-  requestSeek: (seconds) => set({ seekRequest: seconds }),
-  clearSeekRequest: () => set({ seekRequest: null }),
+      progress: 0,
+      setProgress: (seconds) => set({ progress: seconds }),
+      seekRequest: null,
+      requestSeek: (seconds) => set({ seekRequest: seconds }),
+      clearSeekRequest: () => set({ seekRequest: null }),
 
-  playTrack: (track, queueParam) => {
-    const list = queueParam ?? get().queue;
-    const index = list.findIndex((t) => t.id === track.id);
-    const currentIndex = index === -1 ? 0 : index;
-    const order = get().shuffle ? shuffleOrder(list.length) : sequentialOrder(list.length);
-    set({ queue: list, currentIndex, order, isPlaying: true });
-  },
+      playTrack: (track, queueParam) => {
+        const list = queueParam ?? get().queue;
+        const index = list.findIndex((t) => t.id === track.id);
+        const currentIndex = index === -1 ? 0 : index;
+        const order = get().shuffle ? shuffleOrder(list.length) : sequentialOrder(list.length);
+        set({ queue: list, currentIndex, order, isPlaying: true });
+      },
 
-  addToQueue: (track) => {
-    set((s) => {
-      const newIndex = s.queue.length;
-      return { queue: [...s.queue, track], order: [...s.order, newIndex] };
-    });
-  },
+      addToQueue: (track) => {
+        set((s) => {
+          const newIndex = s.queue.length;
+          return { queue: [...s.queue, track], order: [...s.order, newIndex] };
+        });
+      },
 
-  togglePlay: () => set((s) => ({ isPlaying: !s.isPlaying })),
+      togglePlay: () => set((s) => ({ isPlaying: !s.isPlaying })),
 
-  next: () => {
-    const { order, currentIndex, repeatMode } = get();
-    if (order.length === 0) return;
-    const pos = order.indexOf(currentIndex);
-    if (pos < order.length - 1) {
-      set({ currentIndex: order[pos + 1], isPlaying: true });
-    } else if (repeatMode === 'all') {
-      set({ currentIndex: order[0], isPlaying: true });
-    } else {
-      set({ isPlaying: false });
+      next: () => {
+        const { order, currentIndex, repeatMode } = get();
+        if (order.length === 0) return;
+        const pos = order.indexOf(currentIndex);
+        if (pos < order.length - 1) {
+          set({ currentIndex: order[pos + 1], isPlaying: true });
+        } else if (repeatMode === 'all') {
+          set({ currentIndex: order[0], isPlaying: true });
+        } else {
+          set({ isPlaying: false });
+        }
+      },
+
+      prev: () => {
+        const { order, currentIndex } = get();
+        if (order.length === 0) return;
+        const pos = order.indexOf(currentIndex);
+        if (pos > 0) set({ currentIndex: order[pos - 1], isPlaying: true });
+      },
+
+      toggleShuffle: () => {
+        const { queue, shuffle } = get();
+        const newShuffle = !shuffle;
+        const order = newShuffle ? shuffleOrder(queue.length) : sequentialOrder(queue.length);
+        set({ shuffle: newShuffle, order });
+      },
+
+      cycleRepeat: () => {
+        const nextMode: Record<RepeatMode, RepeatMode> = { off: 'all', all: 'one', one: 'off' };
+        set((s) => ({ repeatMode: nextMode[s.repeatMode] }));
+      },
+
+      setVolume: (v) => set({ volume: v, muted: v === 0 }),
+      toggleMute: () => set((s) => ({ muted: !s.muted })),
+
+      updateTrackFavorite: (trackId, isFavorite) =>
+        set((s) => ({ queue: s.queue.map((t) => (t.id === trackId ? { ...t, isFavorite } : t)) })),
+    }),
+    {
+      name: 'player-storage',
+      // No persistimos isPlaying (no queremos que arranque solo al recargar)
+      // ni progress/seekRequest (el audio siempre recarga desde 0 al montar).
+      partialize: (s) => ({
+        queue: s.queue,
+        currentIndex: s.currentIndex,
+        order: s.order,
+        shuffle: s.shuffle,
+        repeatMode: s.repeatMode,
+        volume: s.volume,
+        muted: s.muted,
+      }),
     }
-  },
-
-  prev: () => {
-    const { order, currentIndex } = get();
-    if (order.length === 0) return;
-    const pos = order.indexOf(currentIndex);
-    if (pos > 0) set({ currentIndex: order[pos - 1], isPlaying: true });
-  },
-
-  toggleShuffle: () => {
-    const { queue, shuffle } = get();
-    const newShuffle = !shuffle;
-    const order = newShuffle ? shuffleOrder(queue.length) : sequentialOrder(queue.length);
-    set({ shuffle: newShuffle, order });
-  },
-
-  cycleRepeat: () => {
-    const nextMode: Record<RepeatMode, RepeatMode> = { off: 'all', all: 'one', one: 'off' };
-    set((s) => ({ repeatMode: nextMode[s.repeatMode] }));
-  },
-
-  setVolume: (v) => set({ volume: v, muted: v === 0 }),
-  toggleMute: () => set((s) => ({ muted: !s.muted })),
-
-  updateTrackFavorite: (trackId, isFavorite) =>
-    set((s) => ({ queue: s.queue.map((t) => (t.id === trackId ? { ...t, isFavorite } : t)) })),
-}));
+  )
+);
 
 export function useCurrentTrack() {
   return usePlayerStore((s) => s.queue[s.currentIndex] ?? null);

@@ -6,11 +6,14 @@ import Player from '../Player';
 import ToastContainer from '../common/ToastContainer';
 import { useTracks } from '../../hooks/useTracks';
 import { useRoomKickWatcher } from '../../hooks/useRoomKickWatcher';
+import { useRoomStore } from '../../store/roomStore';
 import NowPlaying from '../NowPlaying';
+import ReactionOverlay from '../room/ReactionOverlay';
 
 export default function AppLayout() {
   useTracks();
   useRoomKickWatcher();
+  const room = useRoomStore((s) => s.room);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -40,6 +43,7 @@ export default function AppLayout() {
       <Player />
       <ToastContainer />
       <NowPlaying />
+      {room && <ReactionOverlay />}
     </div>
   );
 }

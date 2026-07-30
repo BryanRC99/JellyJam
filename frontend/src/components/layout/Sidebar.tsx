@@ -15,6 +15,7 @@ import { apiFetch } from '../../lib/api';
 import { useRoomStore } from '../../store/roomStore';
 import { LogOut } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
+import { useToastStore } from '../../store/toastStore';
 
 interface SidebarProps {
   open: boolean;
@@ -27,6 +28,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
   const logout = useAuthStore((s) => s.logout);
   const room = useRoomStore((s) => s.room);
   const leaveRoom = useRoomStore((s) => s.leaveRoom);
+  const showToast = useToastStore((s) => s.showToast);
 
   function handleLogout() {
     if (room) leaveRoom(); // desconecta el socket si estaba en una sala
@@ -48,16 +50,30 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
   }, [open]);
 
   async function handleCreateRoom() {
-    const room = await apiFetch('/rooms', {
+    if (room) {
+      showToast(`Ya estás en la sala ${room.code}`);
+      navigate('/room');
+      onClose();
+      return;
+    }
+
+    const newRoom = await apiFetch('/rooms', {
       method: 'POST',
       body: JSON.stringify({ allowGuestControl: true }),
     });
-    joinRoom(room.code);
+    joinRoom(newRoom.code);
     navigate('/room');
     onClose();
   }
 
   function handleJoinClick() {
+    if (room) {
+      showToast(`Ya estás en la sala ${room.code}`);
+      navigate('/room');
+      onClose();
+      return;
+    }
+
     navigate('/room/join');
     onClose();
   }

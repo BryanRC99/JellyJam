@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { SyntheticEvent } from 'react';
 import {
   Play, Pause, SkipBack, SkipForward, Loader2,
-  Shuffle, Repeat, Repeat1, Volume2, VolumeX, Users, LogOut, Copy, ListMusic, Maximize2, Mic2, ChevronUp, ChevronDown, X
+  Shuffle, Repeat, Repeat1, Volume2, VolumeX, Users, LogOut, Copy, ListMusic, Maximize2, Mic2, ChevronUp, ChevronDown, X, Smile
 } from 'lucide-react';
 import { usePlayerStore, useCurrentTrack, useUpcomingTracks } from '../store/playerStore';
 import type { Track as LibraryTrack } from '../types/track';
@@ -45,6 +45,7 @@ export default function Player() {
   const leaveRoom = useRoomStore((s) => s.leaveRoom);
   const user = useAuthStore((s) => s.user);
   const showToast = useToastStore((s) => s.showToast);
+  const sendReaction = useRoomStore((s) => s.sendReaction);
 
   if (room) {
     return (
@@ -57,6 +58,7 @@ export default function Player() {
         leaveRoom={leaveRoom}
         userId={user?.id}
         showToast={showToast}
+        sendReaction={sendReaction}
       />
     );
   }
@@ -64,7 +66,7 @@ export default function Player() {
   return <SoloPlayer />;
 }
 
-function RoomPlayer({ room, setPlayback, seek, transferHost, kickMember, leaveRoom, userId, showToast }: any) {
+function RoomPlayer({ room, setPlayback, seek, transferHost, kickMember, leaveRoom, userId, showToast, sendReaction }: any) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const lookup = useTrackLookup();
   const { getServerNow } = useClockSync();
@@ -74,10 +76,12 @@ function RoomPlayer({ room, setPlayback, seek, transferHost, kickMember, leaveRo
   const [showMembers, setShowMembers] = useState(false);
   const [showQueue, setShowQueue] = useState(false);
   const [showLyrics, setShowLyrics] = useState(false);
+  const [showReactions, setShowReactions] = useState(false);
 
   const membersMenuRef = useRef<HTMLDivElement>(null);
   const queueMenuRef = useRef<HTMLDivElement>(null);
   const lyricsMenuRef = useRef<HTMLDivElement>(null);
+  const reactionsMenuRef = useRef<HTMLDivElement>(null);
 
   const volume = usePlayerStore((s) => s.volume);
   const muted = usePlayerStore((s) => s.muted);
@@ -100,6 +104,7 @@ function RoomPlayer({ room, setPlayback, seek, transferHost, kickMember, leaveRo
   useClickOutside(membersMenuRef, () => setShowMembers(false), showMembers);
   useClickOutside(queueMenuRef, () => setShowQueue(false), showQueue);
   useClickOutside(lyricsMenuRef, () => setShowLyrics(false), showLyrics);
+  useClickOutside(reactionsMenuRef, () => setShowReactions(false), showReactions);
   useUnlockAudio([audioRef]);
 
   useEffect(() => {
@@ -341,6 +346,46 @@ function RoomPlayer({ room, setPlayback, seek, transferHost, kickMember, leaveRo
           )}
         </div>
 
+        {/* Panel de Reacciones */}
+        <div ref={reactionsMenuRef} className="relative">
+          <button
+            onClick={() => {
+              setShowReactions((v) => !v);
+              setShowMembers(false);
+              setShowQueue(false);
+              setShowLyrics(false);
+            }}
+            className="flex items-center gap-2 bg-neutral-800 hover:bg-neutral-700 transition rounded-full px-2.5 sm:px-3 py-1.5 shrink-0 text-neutral-300"
+            title="Reacciones"
+          >
+            <Smile size={15} />
+          </button>
+
+          {showReactions && (
+            <div className={`${fixedPanelClass} w-56 bg-neutral-900 border border-neutral-700 rounded-xl shadow-2xl overflow-hidden`}>
+              <div className="p-3 border-b border-neutral-800">
+                <p className="text-sm font-semibold">Reacciones</p>
+              </div>
+              <div className="grid grid-cols-3 gap-2 p-3">
+                {['❤️', '🔥', '🎉', '😂', '👏', '😮'].map((emoji) => (
+                  <button
+                    key={emoji}
+                    onClick={() => {
+                      sendReaction(emoji);
+                      setShowReactions(false);
+                    }}
+                    className="text-2xl py-2 rounded-lg hover:bg-neutral-800 transition"
+                    title="Reaccionar"
+                  >
+                    {emoji}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+
         {/* Panel de Cola (Queue) */}
         <div ref={queueMenuRef} className="relative">
           <button
@@ -348,6 +393,7 @@ function RoomPlayer({ room, setPlayback, seek, transferHost, kickMember, leaveRo
               setShowQueue((v) => !v);
               setShowMembers(false);
               setShowLyrics(false);
+              setShowReactions(false);
             }}
             className="flex items-center gap-2 bg-neutral-800 hover:bg-neutral-700 transition rounded-full px-2.5 sm:px-3 py-1.5 shrink-0"
             title="Cola de la sala"

@@ -40,7 +40,7 @@ function mapTrack(item: any, sessionToken: string) {
     album: item.Album ?? '',
     durationSeconds: item.RunTimeTicks ? Math.round(item.RunTimeTicks / 10_000_000) : 0,
     streamUrl: `${env.publicApiUrl}/music/stream/${item.Id}?token=${sessionToken}`,
-    coverUrl: buildImageUrl(item.Id, sessionToken),
+    coverUrl: imageUrlOrNull(item, sessionToken),
     isFavorite: item.UserData?.IsFavorite ?? false,
   };
 }

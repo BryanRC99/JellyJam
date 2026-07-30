@@ -31,9 +31,10 @@ interface RoomStore {
   transferHost: (targetUserId: string) => void;
   kickMember: (targetUserId: string) => void;
   reorderQueue: (fromIndex: number, toIndex: number) => void;
-removeFromQueue: (index: number) => void;
+  removeFromQueue: (index: number) => void;
   leaveRoom: () => void;
   clearKicked: () => void;
+  sendReaction: (emoji: string) => void;
 }
 
 export const useRoomStore = create<RoomStore>((set) => {
@@ -58,7 +59,8 @@ export const useRoomStore = create<RoomStore>((set) => {
     transferHost: (targetUserId) => socket.emit('room:transfer-host', { targetUserId }),
     kickMember: (targetUserId) => socket.emit('room:kick', { targetUserId }),
     reorderQueue: (fromIndex, toIndex) => socket.emit('room:queue-reorder', { fromIndex, toIndex }),
-removeFromQueue: (index) => socket.emit('room:queue-remove', { index }),
+    removeFromQueue: (index) => socket.emit('room:queue-remove', { index }),
+    sendReaction: (emoji) => socket.emit('room:reaction', { emoji }),
     leaveRoom: () => {
       socket.disconnect();
       set({ room: null });
