@@ -92,6 +92,8 @@ function serveFromCache(itemId: string, range: string | undefined, res: Response
 
   res.setHeader('Accept-Ranges', 'bytes');
   res.setHeader('Content-Type', 'audio/mp4');
+  res.setHeader('Cache-Control', 'private, max-age=31536000, immutable');
+  res.setHeader('Last-Modified', stat.mtime.toUTCString());
 
   if (!range) {
     res.setHeader('Content-Length', stat.size);

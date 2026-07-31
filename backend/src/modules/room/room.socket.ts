@@ -2,6 +2,13 @@ import { Server, Socket } from 'socket.io';
 import { joinRoom, leaveRoom, addToQueue, setPlaybackState, transferHost, kickMember, reorderQueue, removeFromQueue } from './room.store';
 import type { SessionPayload } from '../auth/auth.types';
 
+const GRACE_PERIOD_MS = 10_000;
+
+const pendingRemovals = new Map<string, NodeJS.Timeout>();
+
+function pendingKey(roomId: string, userId: string) {
+  return `${roomId}:${userId}`;
+}
 
 function session(socket: Socket): SessionPayload {
   return socket.data.session as SessionPayload;
@@ -16,6 +23,13 @@ export function registerRoomSocket(io: Server) {
       if (!room) {
         socket.emit('room:error', { message: 'Sala no encontrada' });
         return;
+      }
+
+      const key = pendingKey(room.id, jellyfinUserId);
+      const pending = pendingRemovals.get(key);
+      if (pending) {
+        clearTimeout(pending);
+        pendingRemovals.delete(key);
       }
 
       const member = room.members.find((m) => m.userId === jellyfinUserId);
@@ -73,6 +87,13 @@ export function registerRoomSocket(io: Server) {
       const roomId = socket.data.roomId as string | undefined;
       if (!roomId) return;
 
+      const key = pendingKey(roomId, targetUserId);
+      const pending = pendingRemovals.get(key);
+      if (pending) {
+        clearTimeout(pending);
+        pendingRemovals.delete(key);
+      }
+
       const result = kickMember(roomId, jellyfinUserId, targetUserId);
       if (!result) return;
 
@@ -92,7 +113,6 @@ export function registerRoomSocket(io: Server) {
       const roomId = socket.data.roomId as string | undefined;
       if (!roomId) return;
 
-      // Whitelist simple para evitar que se emita cualquier string arbitrario
       const ALLOWED_EMOJIS = ['❤️', '🔥', '🎉', '😂', '👏', '😮'];
       if (!ALLOWED_EMOJIS.includes(emoji)) return;
 
@@ -107,8 +127,19 @@ export function registerRoomSocket(io: Server) {
     socket.on('disconnect', () => {
       const roomId = socket.data.roomId as string | undefined;
       if (!roomId) return;
-      const room = leaveRoom(roomId, jellyfinUserId);
-      if (room) io.to(roomId).emit('room:state', room);
+
+      const key = pendingKey(roomId, jellyfinUserId);
+
+      const existing = pendingRemovals.get(key);
+      if (existing) clearTimeout(existing);
+
+      const timeout = setTimeout(() => {
+        pendingRemovals.delete(key);
+        const room = leaveRoom(roomId, jellyfinUserId);
+        if (room) io.to(roomId).emit('room:state', room);
+      }, GRACE_PERIOD_MS);
+
+      pendingRemovals.set(key, timeout);
     });
   });
 }

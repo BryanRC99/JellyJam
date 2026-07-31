@@ -68,6 +68,7 @@ export default function Player() {
 
 function RoomPlayer({ room, setPlayback, seek, transferHost, kickMember, leaveRoom, userId, showToast, sendReaction }: any) {
   const audioRef = useRef<HTMLAudioElement>(null);
+  const nextAudioRef = useRef<HTMLAudioElement>(null);
   const lookup = useTrackLookup();
   const { getServerNow } = useClockSync();
   const [isBuffering, setIsBuffering] = useState(false);
@@ -97,6 +98,13 @@ function RoomPlayer({ room, setPlayback, seek, transferHost, kickMember, leaveRo
   const duration = track?.durationSeconds ?? 0;
   const queueTracks: Array<LibraryTrack | undefined> = room.queue.map((trackId: string) => lookup(trackId));
 
+  // Siguiente pista de la cola, para precargarla en segundo plano mientras suena la actual.
+  const nextTrackId =
+    room.currentIndex >= 0 && room.currentIndex + 1 < room.queue.length
+      ? room.queue[room.currentIndex + 1]
+      : null;
+  const nextTrack = nextTrackId ? lookup(nextTrackId) : undefined;
+
   // Hook de letras declarado de forma segura antes del return condicional
   const { data: lyricsData } = useLyrics(track?.id);
   const hasSyncedLyrics = Boolean(lyricsData?.hasLyrics && lyricsData?.syncedLyrics);
@@ -107,22 +115,54 @@ function RoomPlayer({ room, setPlayback, seek, transferHost, kickMember, leaveRo
   useClickOutside(reactionsMenuRef, () => setShowReactions(false), showReactions);
   useUnlockAudio([audioRef]);
 
+  // Precarga en segundo plano la siguiente canción de la cola mientras suena la
+  // actual, para que cuando el host salte, la descarga ya esté hecha (o muy
+  // avanzada) y el navegador la sirva desde su caché en vez de bajarla de nuevo.
+  useEffect(() => {
+    const audio = nextAudioRef.current;
+    if (!audio || !nextTrack) return;
+    if (audio.src !== nextTrack.streamUrl) {
+      audio.src = nextTrack.streamUrl;
+      audio.load();
+    }
+  }, [nextTrack?.id, nextTrack?.streamUrl]);
+
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio || !track) return;
-    if (audio.src !== track.streamUrl) {
-      setIsBuffering(true);
-      audio.src = track.streamUrl;
-      audio.load();
+    if (audio.src === track.streamUrl) return;
+
+    setIsBuffering(true);
+    audio.src = track.streamUrl;
+
+    // Antes de reproducir, nos posicionamos donde "debería ir" la canción según
+    // el reloj de la sala. Así, cuando el audio arranca, ya empieza sincronizado
+    // desde el primer instante, en vez de sonar y luego saltar más tarde.
+    function handleLoadedMetadata() {
+      if (!audio) return;
+      audio.currentTime = getExpectedPosition(room, getServerNow);
+      if (room.isPlaying) audio.play().catch(() => {});
     }
+
+    audio.addEventListener('loadedmetadata', handleLoadedMetadata);
+    audio.load();
+
+    return () => {
+      audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [track?.id, track?.streamUrl]);
 
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
-    if (room.isPlaying) audio.play().catch(() => { });
+    // Solo alterna play/pause de la pista ya cargada. El arranque de una pista
+    // nueva lo maneja el efecto de carga de arriba, que necesita sincronizar
+    // el currentTime ANTES de llamar a play().
+    if (room.isPlaying) audio.play().catch(() => {});
     else audio.pause();
-  }, [room.isPlaying, track?.id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [room.isPlaying]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -221,6 +261,9 @@ function RoomPlayer({ room, setPlayback, seek, transferHost, kickMember, leaveRo
         onCanPlay={() => setIsBuffering(false)}
         onEnded={() => handleSkip(1)}
       />
+
+      {/* Elemento oculto que precarga la siguiente canción de la cola */}
+      <audio ref={nextAudioRef} preload="auto" style={{ display: 'none' }} />
 
       <div className="min-w-0 flex items-center gap-3">
         <img src={track.coverUrl} alt="" className="w-10 h-10 rounded-md object-cover bg-neutral-800 shrink-0 shadow-lg" />
