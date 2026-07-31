@@ -12,6 +12,9 @@ export const env = {
 
   warmCacheUsername: process.env.WARM_CACHE_USERNAME,
   warmCachePassword: process.env.WARM_CACHE_PASSWORD,
+
+  azureSpeechKey: process.env.AZURE_SPEECH_KEY ?? '',
+  azureSpeechRegion: process.env.AZURE_SPEECH_REGION ?? '',
 };
 
 if (!env.jellyfinServerUrl) {
