@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { SyntheticEvent } from 'react';
 import {
   Play, Pause, SkipBack, SkipForward, Loader2,
-  Shuffle, Repeat, Repeat1, Volume2, VolumeX, Users, LogOut, Copy, ListMusic, Maximize2, Mic2, ChevronUp, ChevronDown, X, Smile
+  Shuffle, Repeat, Repeat1, Volume2, VolumeX, Users, LogOut, Copy, ListMusic, Maximize2, Mic2, ChevronUp, ChevronDown, X, Smile, Radio
 } from 'lucide-react';
 import { usePlayerStore, useCurrentTrack, useUpcomingTracks } from '../store/playerStore';
 import type { Track as LibraryTrack } from '../types/track';
@@ -18,6 +18,7 @@ import { useUiStore } from '../store/uiStore';
 import { useLyrics } from '../hooks/useLyrics';
 import LyricsView from './lyrics/LyricsView';
 import MemberList from './room/MemberList';
+import { useDjRadio } from '../hooks/useDjRadio';
 
 function formatTime(seconds: number) {
   if (!isFinite(seconds)) return '0:00';
@@ -69,6 +70,7 @@ export default function Player() {
 function RoomPlayer({ room, setPlayback, seek, transferHost, kickMember, leaveRoom, userId, showToast, sendReaction }: any) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const nextAudioRef = useRef<HTMLAudioElement>(null);
+  const voiceAudioRef = useRef<HTMLAudioElement>(null);
   const lookup = useTrackLookup();
   const { getServerNow } = useClockSync();
   const [isBuffering, setIsBuffering] = useState(false);
@@ -91,6 +93,7 @@ function RoomPlayer({ room, setPlayback, seek, transferHost, kickMember, leaveRo
   const openNowPlaying = useUiStore((s) => s.openNowPlaying);
   const roomReorderQueue = useRoomStore((s) => s.reorderQueue);
   const roomRemoveFromQueue = useRoomStore((s) => s.removeFromQueue);
+  const roomAddToQueue = useRoomStore((s) => s.addToQueue);
 
   const canControl = room.hostUserId === userId || room.allowGuestControl;
   const currentTrackId = room.currentIndex >= 0 ? room.queue[room.currentIndex] : null;
@@ -98,26 +101,37 @@ function RoomPlayer({ room, setPlayback, seek, transferHost, kickMember, leaveRo
   const duration = track?.durationSeconds ?? 0;
   const queueTracks: Array<LibraryTrack | undefined> = room.queue.map((trackId: string) => lookup(trackId));
 
-  // Siguiente pista de la cola, para precargarla en segundo plano mientras suena la actual.
   const nextTrackId =
     room.currentIndex >= 0 && room.currentIndex + 1 < room.queue.length
       ? room.queue[room.currentIndex + 1]
       : null;
   const nextTrack = nextTrackId ? lookup(nextTrackId) : undefined;
 
-  // Hook de letras declarado de forma segura antes del return condicional
   const { data: lyricsData } = useLyrics(track?.id);
   const hasSyncedLyrics = Boolean(lyricsData?.hasLyrics && lyricsData?.syncedLyrics);
+
+  const {
+    isActive: isDjActive,
+    isGenerating: isDjGenerating,
+    isAnnouncing: isDjAnnouncing,
+    startDjRadio,
+    stopDjRadio,
+  } = useDjRadio({
+    room,
+    canControl,
+    musicAudioRef: audioRef,
+    voiceAudioRef,
+    getMusicVolume: () => (muted ? 0 : volume),
+    addToQueue: roomAddToQueue,
+    setPlayback,
+  });
 
   useClickOutside(membersMenuRef, () => setShowMembers(false), showMembers);
   useClickOutside(queueMenuRef, () => setShowQueue(false), showQueue);
   useClickOutside(lyricsMenuRef, () => setShowLyrics(false), showLyrics);
   useClickOutside(reactionsMenuRef, () => setShowReactions(false), showReactions);
-  useUnlockAudio([audioRef]);
+  useUnlockAudio([audioRef, voiceAudioRef]);
 
-  // Precarga en segundo plano la siguiente canción de la cola mientras suena la
-  // actual, para que cuando el host salte, la descarga ya esté hecha (o muy
-  // avanzada) y el navegador la sirva desde su caché en vez de bajarla de nuevo.
   useEffect(() => {
     const audio = nextAudioRef.current;
     if (!audio || !nextTrack) return;
@@ -135,9 +149,6 @@ function RoomPlayer({ room, setPlayback, seek, transferHost, kickMember, leaveRo
     setIsBuffering(true);
     audio.src = track.streamUrl;
 
-    // Antes de reproducir, nos posicionamos donde "debería ir" la canción según
-    // el reloj de la sala. Así, cuando el audio arranca, ya empieza sincronizado
-    // desde el primer instante, en vez de sonar y luego saltar más tarde.
     function handleLoadedMetadata() {
       if (!audio) return;
       audio.currentTime = getExpectedPosition(room, getServerNow);
@@ -156,9 +167,6 @@ function RoomPlayer({ room, setPlayback, seek, transferHost, kickMember, leaveRo
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
-    // Solo alterna play/pause de la pista ya cargada. El arranque de una pista
-    // nueva lo maneja el efecto de carga de arriba, que necesita sincronizar
-    // el currentTime ANTES de llamar a play().
     if (room.isPlaying) audio.play().catch(() => {});
     else audio.pause();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -232,16 +240,53 @@ function RoomPlayer({ room, setPlayback, seek, transferHost, kickMember, leaveRo
     showToast('Miembro expulsado');
   }
 
+  function handleDjToggle() {
+    if (isDjActive) stopDjRadio();
+    else startDjRadio();
+  }
+
+  const djButtonLabel = isDjGenerating
+    ? 'Preparando...'
+    : isDjAnnouncing
+    ? 'DJ hablando...'
+    : isDjActive
+    ? 'DJ ON'
+    : 'DJ';
+
+  const djButton = canControl ? (
+    <button
+      onClick={handleDjToggle}
+      disabled={isDjGenerating || isDjAnnouncing}
+      className={`flex items-center gap-2 transition rounded-full px-2.5 sm:px-3 py-1.5 shrink-0 text-xs font-medium disabled:opacity-60 ${
+        isDjActive ? 'bg-green-500 text-neutral-950' : 'bg-neutral-800 hover:bg-neutral-700 text-neutral-300'
+      }`}
+      title={isDjActive ? 'DJ activo — click para detener la mezcla automática' : 'Activar DJ personalizado'}
+    >
+      {isDjGenerating || isDjAnnouncing ? (
+        <Loader2 size={15} className="animate-spin" />
+      ) : (
+        <Radio size={15} />
+      )}
+      <span className="hidden sm:inline">{djButtonLabel}</span>
+    </button>
+  ) : null;
+
+  const voiceAudioElement = <audio ref={voiceAudioRef} style={{ display: 'none' }} />;
+
   if (!track) {
     return (
       <div className="relative z-20 border-t border-neutral-800 bg-neutral-950/95 px-4 py-3 flex items-center justify-between gap-3">
+        {voiceAudioElement}
         <div className="flex min-w-0 items-center gap-2 text-sm text-neutral-400">
           <Users size={16} className="text-green-500 shrink-0" />
           <span className="truncate">Sala {room.code} - la cola está vacía</span>
         </div>
-        <button onClick={handleLeave} className="text-neutral-400 hover:text-white transition shrink-0" title="Salir de la sala">
-          <LogOut size={16} />
-        </button>
+        <div className="flex items-center gap-2 shrink-0">
+          {djButton}
+          <button onClick={handleLeave} className="text-neutral-400 hover:text-white transition" title="Salir de la sala">
+            <LogOut size={16} />
+          </button>
+        </div>
       </div>
     );
   }
@@ -250,6 +295,7 @@ function RoomPlayer({ room, setPlayback, seek, transferHost, kickMember, leaveRo
 
   return (
     <div className={playerShellClass}>
+      {voiceAudioElement}
       <audio
         ref={audioRef}
         preload="auto"
@@ -321,8 +367,6 @@ function RoomPlayer({ room, setPlayback, seek, transferHost, kickMember, leaveRo
           {muted || volume === 0 ? <VolumeX size={18} /> : <Volume2 size={18} />}
         </button>
 
-        {/* En el original este botón vivía solo dentro del bloque hidden md:flex —
-            en mobile no había forma de abrir la pantalla completa. Lo sacamos aparte. */}
         <button onClick={() => openNowPlaying()} className="md:hidden text-neutral-400 hover:text-white transition shrink-0" title="Pantalla completa">
           <Maximize2 size={18} />
         </button>
@@ -345,6 +389,8 @@ function RoomPlayer({ room, setPlayback, seek, transferHost, kickMember, leaveRo
             <Maximize2 size={18} />
           </button>
         </div>
+
+        {djButton}
 
         {/* Panel e Ícono de Letras (Lyrics) con Indicador Sincronizado */}
         <div ref={lyricsMenuRef} className="relative">
@@ -427,7 +473,6 @@ function RoomPlayer({ room, setPlayback, seek, transferHost, kickMember, leaveRo
             </div>
           )}
         </div>
-
 
         {/* Panel de Cola (Queue) */}
         <div ref={queueMenuRef} className="relative">

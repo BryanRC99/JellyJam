@@ -6,6 +6,7 @@ import {
   joinRoomController,
   leaveRoomController,
   setGuestControlController,
+  getRoomStatsController,
 } from './room.controller';
 
 export const roomRouter = Router();
@@ -14,3 +15,4 @@ roomRouter.get('/:code', requireAuth, getRoomController);
 roomRouter.post('/:code/join', requireAuth, joinRoomController);
 roomRouter.post('/:roomId/leave', requireAuth, leaveRoomController);
 roomRouter.patch('/:roomId/permissions', requireAuth, setGuestControlController);
+roomRouter.get('/:roomId/stats', requireAuth, getRoomStatsController);

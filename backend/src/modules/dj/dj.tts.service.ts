@@ -10,6 +10,23 @@ let cachedToken: {
 /**
  * Obtiene y almacena temporalmente el token de Azure Speech.
  */
+
+async function fetchWithTimeout(url: string, init: RequestInit, timeoutMs = 15000): Promise<Response> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    return await fetch(url, { ...init, signal: controller.signal });
+  } catch (err: any) {
+    if (err.name === 'AbortError') {
+      throw new Error(`Azure Speech no respondió en ${timeoutMs / 1000}s (posible problema de red o región mal configurada)`);
+    }
+    throw err;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 async function getAccessToken(): Promise<string> {
   const now = Date.now();
 
@@ -17,7 +34,7 @@ async function getAccessToken(): Promise<string> {
     return cachedToken.value;
   }
 
-  const res = await fetch(
+  const res = await fetchWithTimeout(
     `https://${env.azureSpeechRegion}.api.cognitive.microsoft.com/sts/v1.0/issueToken`,
     {
       method: 'POST',
@@ -165,19 +182,19 @@ export async function synthesizeSpeech(
     env.clientName?.trim() ||
     'JellyJam-DJ-Backend';
 
-  const res = await fetch(
+  const res = await fetchWithTimeout(
     `https://${env.azureSpeechRegion}.tts.speech.microsoft.com/cognitiveservices/v1`,
     {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/ssml+xml',
-        'X-Microsoft-OutputFormat':
-          'audio-24khz-160kbitrate-mono-mp3',
+        'X-Microsoft-OutputFormat': 'audio-24khz-160kbitrate-mono-mp3',
         'User-Agent': userAgent,
       },
       body: buildSsml(text, voiceName),
-    }
+    },
+    20000
   );
 
   if (!res.ok) {

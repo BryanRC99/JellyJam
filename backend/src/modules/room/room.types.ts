@@ -17,4 +17,9 @@ export interface RoomState {
   isPlaying: boolean;
   startedAt: number | null; // timestamp del servidor cuando empezó a sonar
   basePosition: number; // segundos donde iba la canción al pausar/reanudar
+
+  // Fase 2: estadísticas de la Jam para el bloque "lo que más suena"
+  playCounts: Record<string, number>; // trackId -> veces que arrancó a sonar en esta sala
+  queueAddsByMember: Record<string, number>; // userId -> canciones que agregó a la cola
+  lastCountedIndex: number; // evita recontar un pause/resume de la misma pista
 }

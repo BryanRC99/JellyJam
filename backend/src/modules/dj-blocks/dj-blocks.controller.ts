@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
-import { buildDjBlock } from './dj-blocks.service';
+import { buildDjBlock, buildPersonalizedBlock } from './dj-blocks.service';
 import { getBlock } from './dj-blocks.store';
 import { JellyfinError } from '../jellyfin/jellyfin.service';
 import { inspectLibrary } from './dj-blocks.service';
 import { listLibraryArtists } from './dj-blocks.service';
+
 
 export async function createBlockController(req: Request, res: Response) {
   const session = req.session!;
@@ -63,5 +64,30 @@ export async function listArtistsController(req: Request, res: Response) {
     res.json(data);
   } catch (err: any) {
     res.status(400).json({ error: err.message ?? 'No se pudo listar artistas' });
+  }
+}
+
+export async function createPersonalizedBlockController(req: Request, res: Response) {
+  const session = req.session!;
+  const { previousArtist } = req.body ?? {};
+
+  try {
+    const block = await buildPersonalizedBlock(session.jellyfinUserId, session.jellyfinToken, {
+      previousArtist: typeof previousArtist === 'string' ? previousArtist : undefined,
+    });
+
+    res.json({
+      blockId: block.id,
+      script: block.script,
+      trackIds: block.trackIds,
+      tracks: block.tracks,
+      topArtist: block.topArtist,
+    });
+  } catch (err: any) {
+    console.error('Error generando el bloque personalizado', err);
+    if (err instanceof JellyfinError && err.status === 401) {
+      return res.status(401).json({ error: 'Sesión de Jellyfin expirada' });
+    }
+    res.status(400).json({ error: err.message ?? 'No se pudo generar el bloque personalizado' });
   }
 }

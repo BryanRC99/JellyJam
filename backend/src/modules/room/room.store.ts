@@ -28,6 +28,9 @@ export function createRoom(hostUserId: string, hostName: string, allowGuestContr
     isPlaying: false,
     startedAt: null,
     basePosition: 0,
+    playCounts: {},
+    queueAddsByMember: {},
+    lastCountedIndex: -1,
   };
 
   rooms.set(id, room);
@@ -85,12 +88,15 @@ export function canControlPlayback(room: RoomState, userId: string): boolean {
   return room.hostUserId === userId || room.allowGuestControl;
 }
 
-export function addToQueue(roomId: string, trackId: string): RoomState | undefined {
+export function addToQueue(roomId: string, trackId: string, userId: string): RoomState | undefined {
   const room = rooms.get(roomId);
   if (!room) return undefined;
 
   room.queue.push(trackId);
   if (room.currentIndex === -1) room.currentIndex = 0;
+
+  room.queueAddsByMember[userId] = (room.queueAddsByMember[userId] ?? 0) + 1;
+
   return room;
 }
 
@@ -104,6 +110,15 @@ export function setPlaybackState(
 
   Object.assign(room, updates);
   room.startedAt = room.isPlaying ? Date.now() : null;
+
+  if (room.isPlaying && room.currentIndex !== room.lastCountedIndex) {
+    const trackId = room.queue[room.currentIndex];
+    if (trackId) {
+      room.playCounts[trackId] = (room.playCounts[trackId] ?? 0) + 1;
+      room.lastCountedIndex = room.currentIndex;
+    }
+  }
+
   return room;
 }
 
@@ -177,4 +192,38 @@ export function removeFromQueue(roomId: string, index: number): RoomState | unde
   }
 
   return room;
+}
+
+export interface TrackStat {
+  trackId: string;
+  playCount: number;
+}
+
+export interface MemberStat {
+  userId: string;
+  name: string;
+  addCount: number;
+}
+
+export function getTopTracks(roomId: string, limit = 5): TrackStat[] {
+  const room = rooms.get(roomId);
+  if (!room) return [];
+
+  return Object.entries(room.playCounts)
+    .map(([trackId, playCount]) => ({ trackId, playCount }))
+    .sort((a, b) => b.playCount - a.playCount)
+    .slice(0, limit);
+}
+
+export function getTopMembers(roomId: string, limit = 5): MemberStat[] {
+  const room = rooms.get(roomId);
+  if (!room) return [];
+
+  return Object.entries(room.queueAddsByMember)
+    .map(([userId, addCount]) => {
+      const member = room.members.find((m) => m.userId === userId);
+      return { userId, name: member?.name ?? 'Ex-miembro', addCount };
+    })
+    .sort((a, b) => b.addCount - a.addCount)
+    .slice(0, limit);
 }

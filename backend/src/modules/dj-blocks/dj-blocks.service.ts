@@ -1,9 +1,11 @@
 import { getAudioItems } from '../jellyfin/jellyfin.service';
 import { getOrCreateVoiceAudio } from '../dj/dj.service';
-import { buildIntroScript } from './dj-blocks.templates';
+import { buildIntroScript, buildPersonalizedIntroScript, buildPersonalizedTransitionScript } from './dj-blocks.templates';
 import { saveBlock } from './dj-blocks.store';
 import { ARTIST_GENRE_MAP } from './dj-blocks.artist-map';
 import { BlockCriteria, BlockTrackSummary, DjBlock } from './dj-blocks.types';
+import { getAudioItemById } from '../jellyfin/jellyfin.service';
+import { getTopTracks, getTopMembers } from '../room/room.store';
 
 const DEFAULT_COUNT = 8;
 const OLD_THRESHOLD_YEAR = 2015; // criterio simple: "viejo" = antes de este año
@@ -131,4 +133,64 @@ export async function listLibraryArtists(userId: string, token: string) {
     totalUniqueArtists: sorted.length,
     artists: sorted,
   };
+}
+
+export async function buildPersonalizedBlock(
+  userId: string,
+  token: string,
+  options: { count?: number; previousArtist?: string } = {}
+): Promise<DjBlock & { topArtist?: string }> {
+  const count = options.count ?? 8;
+  const items = await getAudioItems(userId, token);
+
+  if (items.length === 0) {
+    throw new Error('Tu biblioteca no tiene canciones todavía');
+  }
+
+  const withPlayCount = items
+    .map((item: any) => ({ item, playCount: item.UserData?.PlayCount ?? 0 }))
+    .filter((entry: any) => entry.playCount > 0);
+
+  const pool = withPlayCount.length > 0 ? withPlayCount : items.map((item: any) => ({ item, playCount: 0 }));
+
+  const artistScores: Record<string, number> = {};
+  for (const { item, playCount } of pool) {
+    const artist = item.Artists?.[0];
+    if (!artist) continue;
+    artistScores[artist] = (artistScores[artist] ?? 0) + playCount;
+  }
+
+  // Evitamos repetir el mismo artista que ya se anunció en el bloque anterior, para dar variedad
+  const sortedArtists = Object.entries(artistScores).sort((a, b) => b[1] - a[1]);
+  const topArtist =
+    sortedArtists.find(([artist]) => artist !== options.previousArtist)?.[0] ?? sortedArtists[0]?.[0];
+
+  const sortedByPlayCount = [...pool].sort((a, b) => b.playCount - a.playCount);
+  const topSlice = sortedByPlayCount.slice(0, Math.ceil(count * 0.6)).map((e) => e.item);
+
+  const remainingPool = items.filter((item: any) => !topSlice.some((t: any) => t.Id === item.Id));
+  const randomSlice = shuffle(remainingPool).slice(0, count - topSlice.length);
+
+  const selected = shuffle([...topSlice, ...randomSlice]);
+
+  const tracks: BlockTrackSummary[] = selected.map((item: any) => ({
+    id: item.Id,
+    title: item.Name,
+    artist: item.Artists?.[0] ?? 'Desconocido',
+  }));
+
+  const script = options.previousArtist
+    ? buildPersonalizedTransitionScript({ previousArtist: options.previousArtist, nextArtist: topArtist })
+    : buildPersonalizedIntroScript({ topArtist });
+
+  const audio = await getOrCreateVoiceAudio(script);
+
+  const block = saveBlock({
+    script,
+    trackIds: tracks.map((t) => t.id),
+    tracks,
+    audio,
+  });
+
+  return { ...block, topArtist };
 }

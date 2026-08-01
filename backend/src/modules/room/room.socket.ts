@@ -43,7 +43,7 @@ export function registerRoomSocket(io: Server) {
     socket.on('room:queue-add', ({ trackId }: { trackId: string }) => {
       const roomId = socket.data.roomId as string | undefined;
       if (!roomId) return;
-      const room = addToQueue(roomId, trackId);
+      const room = addToQueue(roomId, trackId, jellyfinUserId);
       if (room) io.to(room.id).emit('room:state', room);
     });
 

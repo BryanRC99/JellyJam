@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { createRoom, getRoomByCode, joinRoom, leaveRoom, setGuestControl } from './room.store';
+import { createRoom, getRoomByCode, joinRoom, leaveRoom, setGuestControl, getTopTracks, getTopMembers } from './room.store';
 
 export function createRoomController(req: Request, res: Response) {
   const session = req.session!;
@@ -47,4 +47,14 @@ export function setGuestControlController(req: Request, res: Response) {
   io.to(room.id).emit('room:state', room);
 
   res.json(room);
+}
+
+export function getRoomStatsController(req: Request, res: Response) {
+  const { roomId } = req.params as { roomId: string };
+  const limit = req.query.limit ? Number(req.query.limit) : undefined;
+
+  res.json({
+    topTracks: getTopTracks(roomId, limit),
+    topMembers: getTopMembers(roomId, limit),
+  });
 }
