@@ -68,7 +68,7 @@ export async function getAudioItems(userId: string, token: string) {
     IncludeItemTypes: 'Audio',
     Recursive: 'true',
     SortBy: 'SortName',
-    Fields: 'Artists,Album,RunTimeTicks,UserData',
+    Fields: 'Artists,Album,RunTimeTicks,UserData,Genres,ProductionYear',
   });
 
   const res = await jellyfinFetch(`${env.jellyfinServerUrl}/Users/${userId}/Items?${params}`, token);

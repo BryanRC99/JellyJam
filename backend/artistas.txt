@@ -1,0 +1,598 @@
+﻿16	Daddy Yankee
+16	Aventura
+14	Binomio de Oro de América
+13	Don Omar
+13	Los Diablitos
+12	Los Gigantes del Vallenato
+12	Segundo Rosero
+11	Los Inquietos
+11	Bad Bunny
+10	Romeo Santos
+9	Plan B
+8	Prince Royce
+8	Los Inquietos del Vallenato
+7	Widinson
+7	Alzate
+7	Wisin & Yandel
+7	Ozuna
+6	Christian Nodal
+6	Yeison Jimenez
+6	Jessi Uribe
+6	Julio Jaramillo
+6	Tierra Canela
+5	Michael Jackson
+5	Avicii
+5	Sahiro, Saul Proaño
+5	Mana
+5	Juan Luis Guerra 4.40
+4	Selena
+4	Maluma
+4	Farruko
+4	Pipe Bueno
+4	Feid
+4	Jorge Celedón, Jimmy Zambrano
+4	Los Bufalos
+4	Nicky Jam
+4	Leo Dan
+3	Alan Walker
+3	Jorge Celedón/ Jimmy Zambrano
+3	J Balvin
+3	Modern Talking
+3	Chino & Nacho
+3	Alejandro Fernández
+3	Makano
+3	Tito El Bambino
+3	Chayanne
+3	Carlos Vives
+3	Darío Gómez
+3	Alkilados
+3	Adolescent´s Orquesta
+3	Joan Sebastian
+3	Nigga/Flex
+3	Julieta Venegas
+3	Eddie Santiago
+3	Grupo Marabu
+3	Elefante
+3	Jhon Alex Castaño
+3	Vicente Fernández
+3	Bronco
+3	Sahiro, Oswaldo Vásquez
+3	Jesse & Joy
+2	Juanes
+2	Paulo Londra
+2	Wolfine
+2	Yiyo Sarante
+2	Frankie Ruiz
+2	Adrian Barba
+2	La Factoria
+2	Embrujo Vallenato
+2	Manuel Turizo
+2	Zion & Lennox
+2	Enanitos Verdes
+2	Adriana Lucia
+2	Arcangel
+2	Fanny Lu
+2	Adolescent's Orquesta
+2	Joey Montana
+2	Ana Gabriel
+2	Ed Sheeran
+2	Marco Antonio Solís
+2	Rkm & Ken-y
+2	Américo
+2	Queen
+2	Jerry Rivera
+2	Juan Luis Guerra
+2	The Black Eyed Peas
+2	Jeanette
+2	Mickey Taveras
+2	Kaleth Morales, Juank Ricardo
+2	Luis Alfonso
+2	El Más Querido de Ecuador Gerardo Morán
+2	RKM & Ken-Y
+2	Patricia Teheran
+2	J Balvin/ Bad Bunny
+2	Bacilos
+2	J Alvarez
+2	Mägo de Oz
+2	Tego Calderón
+2	Maelo Ruiz
+2	Eminem
+2	Rey Ruiz
+2	Nino Bravo
+2	Myke Towers
+2	Wisin
+2	Grupo Acústica
+2	Juan Gabriel
+1	Feid/ Nacho
+1	Calibre 50
+1	David Bisbal, Sebastian Yatra
+1	Poder Negro
+1	Tainy/ J Balvin
+1	Chris Jedi/ J Balvin/ Ozuna/ Arcángel
+1	Luis Miguel
+1	Michel Teló
+1	Jhonny Rivera/ Jhonny Rivera, Andy Rivera & Jessi Uribe/ Andy Rivera/ Jessi Uribe
+1	La Combinación Vallenata/Jean Carlos Centeno/Nicky Lopez
+1	Papaya Dada, Los Cumbia Stars
+1	Ricardo Guerrero
+1	Chino & Nacho/ Daddy Yankee
+1	Martin Garrix
+1	Beder Musicologo
+1	Amanda Miguel
+1	Daniel Calderón y Los Gigantes Del Vallenato/Los Gigantes del Vallenato
+1	IAmChino/ Pitbull/ Yandel/ El Chacal
+1	David Guetta/ Showtek/ VASSY
+1	Enrique Iglesias/ Descemer Bueno/ Gente De Zona
+1	Juan Magan
+1	Manuel Medrano
+1	Morat/Juanes
+1	Nova & Jory
+1	J Balvin/ Jowell & Randy
+1	Showtek/We Are Loud/Sonny Wilson
+1	Nacho/Yandel/Bad Bunny
+1	Bip
+1	Bad Bunny/ Tainy
+1	Pedro Capó/ Farruko
+1	Antonio Banderas/los Lobos
+1	Erre Xi, Pee Wee
+1	Prince Royce/ Myke Towers
+1	Carlos Baute/ Marta Sánchez
+1	Yandel/ Wisin
+1	Jose Luis Carrascal
+1	Luciano Pereyra
+1	Daddy Yankee/SNoW
+1	Alzate, Darío Gómez
+1	Natti Natasha/Ozuna
+1	Morat
+1	Becky G/Paulo Londra
+1	Maluma/ Trap Capos/ Noriel/ Bryant Myers/ Juhn
+1	Nicky Jam/ Silvestre Dangond
+1	Los Angeles Azules
+1	Enrique Iglesias/ Wisin
+1	Bizarrap, Daddy Yankee
+1	The Flirts
+1	Thalía, Maluma
+1	Alex Gaudino/ Crystal Waters
+1	Dalmata
+1	Bad Bunny/ Ozuna/ Farruko/ Arcangel/ Ñengo Flow/ DJ Luian/ Mambo Kingz
+1	Monchy & Alexandra
+1	Piso 21/ Manuel Turizo
+1	Enrique Iglesias/Bad Bunny
+1	Tony Dize
+1	Rauw Alejandro/ Chencho Corleone/ KEVVO/ Lyanno/ Bryant Myers/ Dalex
+1	Ozuna/ Romeo Santos
+1	Pitbull/ Osmani Garcia "La Voz"/ Sensato
+1	Baby Rasta Y Gringo, Plan B
+1	Nicky Jam, Daddy Yankee
+1	Fonseca
+1	Andy Rivera, Dalmata
+1	Justin Quiles
+1	Pitbull/ John Ryan
+1	Deorro
+1	Wisin & Yandel/ Jennifer Lopez
+1	Yahritza Y Su Esencia/Grupo Frontera
+1	Juan Luis Guerra 4.40/ Romeo Santos
+1	Pitbull/ AFROJACK/ Ne-Yo/ Nayer
+1	Pipe Bueno, Jessi Uribe, Yeison Jimenez, Carin Leon, Alzate, Darío Gómez, Luis Alberto Posada, El Charrito Negro, Jhonny Rivera, Jhon Alex Castaño, Juan Pablo Navarrete
+1	Charly Black
+1	Nacho, Los Mendoza
+1	Baauer
+1	Natalia Lafourcade
+1	Juan Magán/ Gente De Zona
+1	Janji, Johnning
+1	Alexandra
+1	Eagles
+1	Nicola Fasano, Miami Rockets
+1	Kiss
+1	AronChupa/ Little Sis Nora
+1	Dynoro/ Gigi D'Agostino
+1	Martin Garrix/ Bebe Rexha
+1	3BallMTY, América Sierra, El Bebeto
+1	Eddy Joniel, Jossimar, CG Monarco
+1	Ryan Castro
+1	Los Caligaris
+1	Zacarías Ferreira
+1	Yng Lvcas/Peso Pluma
+1	Galy Galiano/Jessi Uribe
+1	Super Yei, Sammy, Myke Towers, Lenny Tavarez, Rafa Pabön
+1	De La Ghetto/ Daddy Yankee/ Ozuna/ Chris Jedi
+1	Gente De Zona/ Marc Anthony
+1	Los Auténticos Decadentes
+1	Jombriel, Waldokinc El Troyano, Jøtta
+1	Nio Garcia/ Anuel AA/ Myke Towers/ Brray/ Juanka
+1	Chris Jedi/Anuel AA/Chencho Corleone/Ñengo Flow
+1	Dj Luian/Mambo Kingz/De La Ghetto/Arcangel/Ozuna/Anuel Aa
+1	Daddy Yankee/ Ozuna
+1	Maluma/Eli Palacios 
+1	Mala Fé
+1	Baby Rasta Y Gringo
+1	Kaoma
+1	Kaleth Morales
+1	KHEA/Bad Bunny/DUKI/Cazzu
+1	RD Maravilla/El Original
+1	John Newman
+1	Skrillex/ Damian Marley
+1	Chris Rivera
+1	Los Genios Del Vallenato, Jorge Pabuena
+1	Silvestre Dangond/ Nicky Jam
+1	Luny Tunes/ Daddy Yankee/ Don Omar/ Wisin & Yandel
+1	Becky G/ Bad Bunny
+1	Baby Rasta Y Gringo, Ñengo Flow, Jory Boy
+1	Reik/ Ozuna/ Wisin
+1	Mambo Kingz, DJ Luian, Luigi 21 Plus & Ozuna
+1	Danny Ocean
+1	Chino & Nacho/ Farruko
+1	Jhayco/Anuel AA/J Balvin
+1	Jhonny Rivera/Sebastian Ayala/Andy Rivera
+1	J Balvin/ Willy William
+1	Alzate, Yeison Jimenez
+1	Sonyk El Dragón
+1	Banda Los Recoditos
+1	Camila
+1	Ryan Castro/Feid
+1	Rayo & Toby
+1	Las Chicas Dulces
+1	A.B. Quintanilla III Y Los Kumbia Kings
+1	Paulo Londra/ Lenny Tavarez
+1	Grupo Frontera
+1	Ronald Núñez
+1	Yao
+1	Wisin/ Carlos Vives/ Daddy Yankee
+1	Aventura, Judy Santos
+1	Romeo Santos, Drake
+1	Mc Kevinho
+1	Pimpinela
+1	Cartoon,  Jéja, Daniel Levi
+1	Jennifer Lopez/Pitbull
+1	Desiigner
+1	Aldo Ranks
+1	Jombriel, Alex Krack, Jøtta
+1	Comando Tiburon
+1	Elvis Crespo, Fito Blanko
+1	La Factoria/Eddy Lover
+1	Miranda!
+1	Myke Towers/ Haze
+1	Cali Y El Dandee, Juan Magan, Sebastian Yatra
+1	Carin Leon
+1	Palito Ortega
+1	Kid Cudi/ MGMT/ Ratatat
+1	La Sonora Dinamita/ Mon Laferte
+1	Alex Sensation/ Ozuna
+1	Bizarrap/Quevedo
+1	La Combinación Vallenata/Jean Carlos Centeno/Beto Villa
+1	Jair
+1	Bingo Players
+1	Guaynaa
+1	J Alvarez/ Arcángel
+1	Adele
+1	Maisak, Feid
+1	Enrique Iglesias/ Descemer Bueno/ Zion & Lennox
+1	Kino Rankins
+1	Sanluis/ Chino y Nacho
+1	Reykon
+1	Maluma/Carin Leon
+1	Bad Bunny/ Prince Royce/ J Balvin/ Mambo Kingz/ DJ Luian
+1	Cecy Narvaez
+1	Earth, Wind & Fire
+1	Ricchi E Poveri
+1	David Guetta/ Skylar Grey
+1	Dario Javier
+1	Íñigo Quintero
+1	Plan B/ Zion & Lennox/ Tony Dize
+1	Karolina
+1	Myke Towers/ Farruko/ Arcangel/ Sech/ Zion
+1	Ozuna/Juanka
+1	J Balvin/Bad Bunny
+1	Nicky Jam/ De La Ghetto
+1	Arcangel/ Sech/ Dímelo Flow
+1	Alvaro Soler
+1	Ozuna/Mambo Kingz/Dj Luian/Bad Bunny/Wisin/Almighty
+1	Don Medardo y sus Players Mauricio Luzuriaga
+1	Justin Bieber/ J Balvin
+1	Ben E. King
+1	Edward Maya/Vika Jigulina
+1	Lary Over, Lirico En La Casa
+1	Los Mier
+1	Nio Garcia/ Casper Magico/ Bad Bunny/ Darell/ Ozuna/ Nicky Jam
+1	Nicky Jam/Cosculluela
+1	El Vega
+1	Jhonny Rivera
+1	Europe
+1	Pitbull/Kesha
+1	Nicky Jam, Arcángel, J Balvin, Zion, De La Ghetto
+1	Dimitri Vegas/Martin Garrix/Like Mike
+1	Los Prisioneros
+1	SAGITARIO, Jesús Manuel, Victor Nain
+1	Esaú Ortiz
+1	DVBBS, Borgeous
+1	Reykon/ LOS MORTAL COMBAT
+1	Los Valbuena
+1	Bad Bunny/ Daddy Yankee/ Anuel AA/ Cosculluela
+1	Arcangel, Bad Bunny
+1	Polima WestCoast/Pailita
+1	Marqués
+1	Alkilados/ J Alvarez/ El Roockie/ Nicky Jam
+1	Fuego
+1	Joaquin Guiller, Pipe Bueno, Paola Jara, Jhonny Rivera, Georgy Parra
+1	Alzate, Segundo Rosero
+1	Angel Y Khriz
+1	Alan Ramírez
+1	Ricky Martin, Maluma
+1	William Luna
+1	Silvestre Dangond, Maluma
+1	Marc Anthony
+1	Felipe Peláez/Maluma
+1	Aventura/ Bad Bunny
+1	Major Lazer/ Busy Signal/ The Flexican/ FS Green
+1	Pitbull/ Jennifer Lopez/ Claudia Leitte
+1	Yolanda Be Cool/ DCUP
+1	Haddaway
+1	Paolo Salvatore
+1	Zion
+1	Powfu/ beabadoobee
+1	Grupo Frontera, Bad Bunny
+1	Fredy Montoya/ Luisito Muñoz
+1	Alexis & Fido
+1	Waldokinc El Troyano
+1	Brytiago/Darell
+1	La Combinación Vallenata/Jean Carlos Centeno/John Lozano
+1	Gusttavo Lima
+1	Skrillex/ Sirah
+1	Leo Dan/Rubén Albarrán
+1	Boddega
+1	Tones And I
+1	mr black el presidente
+1	CNCO, Yandel
+1	The Noise, Zion & Lennox
+1	Bachata Heightz, Hector Acosta "El Torito"
+1	Los Abuelos de la Nada
+1	Dschinghis Khan
+1	Rata Blanca
+1	Los Tiernos Del Vallenato
+1	Erick Y La Decision Vallenata
+1	Elvis Crespo
+1	Los Angeles Azules/ Natalia Lafourcade
+1	Black Sabbath
+1	Boney M.
+1	Harry Styles
+1	Bee Gees
+1	Afrojack/Martin Garrix
+1	Frankie Ruíz
+1	Yuridia
+1	Latin Fresh
+1	Wisin/ Jennifer Lopez/ Ricky Martin
+1	Reyli Barba
+1	Hector & Tito/Luny Tunes/Noriega
+1	Feid/ Yandel
+1	Shakira/ Maluma
+1	Pandora
+1	Los Muchachos
+1	Combinación vallenata/Los Diablitos/Jean Carlos Centeno
+1	Alex Gargolas/ Daddy Yankee/ Nicky Jam
+1	Don Omar/ Natti Natasha
+1	Fernando Burbano
+1	Omega/Daddy Yankee
+1	Pitbull
+1	Noe Morales
+1	Bon Jovi
+1	Farruko/Bad Bunny/Rvssian
+1	Magic System/ Chawki
+1	Galy Galiano
+1	La 5ª Estación
+1	Luis Mateus/David Rendón
+1	Don Omar/ Wisin & Yandel
+1	SAGITARIO/Jesús Manuel/Victor Nain
+1	Romeo Santos/ Santana
+1	Eddy Lover
+1	J Balvin, Jhay Cortez, Bad Bunny
+1	Gloria Trevi
+1	LMFAO/ Lauren Bennett/ GoonRock
+1	Yandel/ Farruko/ Gadiel El General
+1	Nicky Jam/ Plan B
+1	Pitbull/ Marc Anthony
+1	CNCO
+1	Twenty One Pilots
+1	J Balvin/ Pharrell Williams/ BIA/ Sky
+1	Guayacan Orquesta
+1	Leo Dan/Ricardo Montaner
+1	Macklemore & Ryan Lewis/ Macklemore/ Ryan Lewis/ Wanz
+1	Raulín Rosendo
+1	Ozuna/ Manuel Turizo
+1	K'naan/David Bisbal
+1	Cali Y El Dandee
+1	Zion & Lennox/ Daddy Yankee
+1	Imagine Dragons
+1	Fuerza Regida, Grupo Frontera
+1	J King Y Maximan
+1	Daddy Yankee/ J Alvarez
+1	Joe Arroyo/La Verdad
+1	Survivor
+1	Ricardo Arjona
+1	Don Omar/ Plan B
+1	Jay Wheeler/DJ Nelson/Myke Towers
+1	El Chapo De Sinaloa
+1	Major Lazer/ MØ/ DJ Snake
+1	Elvis Martinez
+1	Trebol Clan, Héctor "El Father", Tito El Bambino
+1	Daddy Yankee, Wisin & Yandel
+1	Luis Mateus, David Rendón
+1	LMFAO
+1	Alex Gargolas, Randy
+1	Thalia/ Prince Royce
+1	Carín León
+1	Omar Geles
+1	Kevin Roldan
+1	J Balvin/ Farruko
+1	Wisin & Yandel/Chris Brown/T-Pain
+1	Mon Laferte/ Juanes
+1	Victor Manuelle
+1	K'naan, Adam Levine
+1	Chino & Nacho/ Jay Sean
+1	Equilivre
+1	Romeo Santos, Prince Royce
+1	Fanny Lu, Chino & Nacho
+1	Hector & Tito
+1	Miguel Moly
+1	Adalberto Santiago
+1	Los Terribles Diamantes de Valencia
+1	Joe Arroyo
+1	LIZ/Los Melodicos
+1	Miguel Morales
+1	Romeo Santos, Tomatito
+1	Zion, Jory Boy, Ken-Y
+1	Willie Gonzalez
+1	Cosculluela
+1	Darwin del Ecuador
+1	Yandar & Yostin/Andy Rivera
+1	Hipatia Balseca
+1	Coldplay
+1	George Michael
+1	Prince Royce, Shakira
+1	Hombres G
+1	Los Palmeras
+1	Romeo Santos, Kiko Rodriguez
+1	Luis Alberto Posada
+1	Chiquetete
+1	Grupo Niche
+1	Edgar Joel/ Anthony Colon
+1	Feid/ ATL Jacob
+1	Afrosound
+1	Manu Chao
+1	Wisin & Yandel/ Don Omar
+1	Don Omar/ Juan Magán
+1	Daddy Yankee/ Wisin & Yandel/ Hector/ Tonny Tun Tun/ Zion
+1	Eros Ramazzotti, Carin Leon
+1	Shakira/ Nicky Jam
+1	Grupo Mojado
+1	David Guetta, Ne-Yo, Akon
+1	Leo Dan/ La Original Banda El Limón de Salvador Lizárraga
+1	De La Ghetto
+1	Jorge Celedón, El Binomio De Oro De América
+1	Eddy Herrera
+1	J Balvin/ Bad Bunny/ Marciano Cantero
+1	America Pop
+1	Bruno Mars
+1	Christina Perri
+1	Beele
+1	La Combinación Vallenata/ Alex Manga/ Morre Romero
+1	Miguel Bosé
+1	Willie Colón, Legal Alien
+1	Gera MX/Christian Nodal
+1	Don Omar, Valentino
+1	Hildemaro
+1	Yandel
+1	Andrés Calamaro
+1	Los Angeles Azules/ Ximena Sarinana
+1	Reik
+1	Chichi Peralta/ Jandy Feliz
+1	La Oreja de Van Gogh
+1	Daddy Yankee, Randy
+1	Otto Serge/Rafael Ricardo
+1	Nicky Jam/ Wisin
+1	Romeo Santos/Ozuna
+1	Sergio Vargas
+1	Farruko/Ky-Mani Marley
+1	Enrique Iglesias/ Juan Luis Guerra 4.40
+1	Giovanny Ayala
+1	Grupo Frontera, Grupo Firme
+1	Ricardo Arjona, Gaby Moreno
+1	Daft Punk/ Pharrell Williams/ Nile Rodgers
+1	Daddy Yankee/ De La Ghetto/ Ñengo Flow/ Arcangel/ Farruko/ Baby Rasta Y Gringo/ Kyza/ Kendo
+1	Los Angeles de Charly
+1	Aaron Montalvo
+1	Big Boy/ Angel Lopez
+1	Angel y Khriz/Gocho "El Lápiz De Platino"/John eric
+1	Propuesta Vallenata/Francisco Javier/Mauricio Arango
+1	Gran Combo de Colombia
+1	Calvin Harris
+1	The Weeknd
+1	Roberto Carlos
+1	Los Autenticos Decadentes
+1	Luis Fonsi/Daddy Yankee
+1	Leo Dan/ Bronco
+1	Aventura/ Don Omar
+1	Trebol Clan, Joan
+1	Bad Bunny/Tony Dize
+1	Joaquin Guiller, Maycol Rosero, Grupo BerEn
+1	Sech
+1	Jesse & Joy/Luis Fonsi
+1	Ramon Orlando
+1	Daddy Yankee, Zion & Lennox
+1	Romeo Santos/ Marc Anthony
+1	Calle 13
+1	Don Omar/ Tego Calderón
+1	Daddy Yankee/ Nicky Jam/ Romeo Santos
+1	El Potro Álvarez/Chino & Nacho
+1	Romeo Santos/ Anthony Santos/ Luis Vargas/ Raulin Rodriguez
+1	Gala/ Molella/ Phil Jay
+1	Oscar D'León
+1	Elvis Martinez El Camarón
+1	Hector El Father, Divino
+1	David Pabón
+1	Willie Colón
+1	Lenin Ramírez
+1	Los Tupamaros, Rochy
+1	Leo Dan/Matisse
+1	Soda Stereo
+1	Felipe Peláez, Zabaleta
+1	Enrique Iglesias, Marco Antonio Solís
+1	Tito El Bambino/ Beenie Man/ Inês
+1	Leo Dan/Andrés Cepeda
+1	Alci Acosta
+1	Bronco/ León Larregui
+1	Los Iracundos
+1	Gilberto Santa Rosa
+1	Aaron Smith/ Krono/ Luvli
+1	Don Omar/ Lucenzo
+1	Pato Banton
+1	Carlos Vives/ Shakira
+1	Leo Dan/ Amanda Miguel
+1	J Alvarez/ Ñejo & Dalmata
+1	Farruko, José Feliciano
+1	Shakira, Freshlyground
+1	Nelly
+1	Flex
+1	Wisin/ Ozuna
+1	Enrique Iglesias/Romeo Santos
+1	Maroon 5/ Christina Aguilera
+1	Wisin & Yandel/ Anthony Santos
+1	Carlos Vives, Sebastian Yatra
+1	Corona
+1	Kaleth Morales, Andrés Herrera
+1	Bronco, Julieta Venegas
+1	Jorge Leo & Atrato River
+1	Mora/Feid
+1	Río Roma
+1	Bad Bunny/Bomba Estéreo
+1	Farruko/Sean Paul
+1	Bad Bunny/ Jowell & Randy/ Ñengo Flow
+1	El Binomio De Oro De América
+1	Jose Luis Perales
+1	Arcángel
+1	Espinoza Paz
+1	La Combinación Vallenata/ Julián Rojas/ Jr. Santiago
+1	Tony Dize, Plan B
+1	Peter Manjarrés, Sergio Luis Rodríguez
+1	Mana/ Prince Royce
+1	Jarabe de Palo
+1	Trebol Clan
+1	Hector Bambino "EL Father", Wisin & Yandel
+1	La Unión
+1	Gianluca Grignani
+1	Tony Dize, Ken-Y
+1	Dread Mar I
+1	Daddy Yankee/ Prince Royce
+1	Vico C/Gilberto Santa Rosa
+1	Nejo & Dalmata
+1	Xtreme
+1	Enrique Iglesias/ Nicky Jam
+1	Ivy Queen
+1	Gabino Pampini
+1	Melendi
+1	Anuel Aa, Cosculluela
+1	El Chico Jaramillo
+1	Reggaetones
+1	Miguel Morales/ Juan David Herrera
+1	El Combo De Las Estrellas
+1	Los De La Nazza
+1	Colombianisimo

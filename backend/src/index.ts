@@ -10,6 +10,8 @@ import { requireAuth } from './middleware/require-auth';
 import { verifySession } from './modules/auth/auth.service';
 import { registerRoomSocket } from './modules/room/room.socket';
 import { djRouter } from './modules/dj/dj.routes';
+import { djBlocksRouter } from './modules/dj-blocks/dj-blocks.routes';
+
 
 const app = express();
 
@@ -38,6 +40,7 @@ app.use('/api/music', musicRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/rooms', roomRouter);
 app.use('/api/dj', djRouter);
+app.use('/api/dj-blocks', djBlocksRouter);
 
 app.get('/api/me', requireAuth, (req, res) => {
   res.json({ session: req.session });
